@@ -134,13 +134,18 @@ void BuildStatus::BuildEdgeFinished(Edge* edge,
 
   // Print the command that is spewing before printing its output.
   if (!success) {
-    string outputs;
-    for (vector<Node*>::const_iterator o = edge->outputs_.begin();
+    if(config_.verbosity == BuildConfig::VERBOSE){
+      string outputs;
+      for (vector<Node*>::const_iterator o = edge->outputs_.begin();
          o != edge->outputs_.end(); ++o)
       outputs += (*o)->path() + " ";
-
-    printer_.PrintOnNewLine("FAILED: " + outputs + "\n");
-    printer_.PrintOnNewLine(edge->EvaluateCommand() + "\n");
+      if(printer_.supports_color()){
+        printer_.PrintOnNewLine("\x1b[31mFAILED:\x1b[0m " + outputs + "\n");
+      } else {
+        printer_.PrintOnNewLine("FAILED: " + outputs + "\n");
+      }
+      printer_.PrintOnNewLine(edge->EvaluateCommand() + "\n");
+    }
   }
 
   if (!output.empty()) {
