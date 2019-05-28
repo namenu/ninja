@@ -48,11 +48,15 @@ LinePrinter::LinePrinter() : have_blank_line_(true), console_locked_(false) {
     smart_terminal_ = GetConsoleScreenBufferInfo(console_, &csbi);
   }
 #endif
+#if 0 
   supports_color_ = smart_terminal_;
   if (!supports_color_) {
     const char* clicolor_force = getenv("CLICOLOR_FORCE");
     supports_color_ = clicolor_force && string(clicolor_force) != "0";
   }
+#else  
+  supports_color_ = ShouldBeColorFul(smart_terminal_); 
+#endif
 #ifdef _WIN32
   // Try enabling ANSI escape sequence support on Windows 10 terminals.
   if (supports_color_) {
