@@ -31,7 +31,24 @@ DyndepParser::DyndepParser(State* state, FileReader* file_reader,
 bool DyndepParser::Parse(const string& filename, const string& input,
                          string* err) {
   lexer_.Start(filename, input);
-
+#if 1
+  for (;;) {
+    Lexer::Token token = lexer_.ReadToken();
+    switch (token) {
+    case Lexer::BUILD: {
+      if (!ParseEdge(err))
+        return false;
+      break;
+    }
+    case Lexer::NEWLINE:
+      break;
+    case Lexer::TEOF:
+      return true;
+    default:
+      return lexer_.Error(string("unexpected ") + Lexer::TokenName(token), err);
+    }
+  }
+#else
   // Require a supported ninja_dyndep_version value immediately so
   // we can exit before encountering any syntactic surprises.
   bool haveDyndepVersion = false;
@@ -70,6 +87,7 @@ bool DyndepParser::Parse(const string& filename, const string& input,
     }
   }
   return false;  // not reached
+#endif  
 }
 
 bool DyndepParser::ParseDyndepVersion(string* err) {
@@ -117,10 +135,11 @@ bool DyndepParser::ParseEdge(string* err) {
     uint64_t slash_bits;
     if (!CanonicalizePath(&path, &slash_bits, &path_err))
       return lexer_.Error(path_err, err);
-    Node* node = state_->LookupNode(path);
+    Node* node = state_->LookupNode(path); 
     if (!node || !node->in_edge())
       return lexer_.Error("no build statement exists for '" + path + "'", err);
-    Edge* edge = node->in_edge();
+    Edge* edge = node->in_edge(); 
+    // Get the edge it is attached to
     std::pair<DyndepFile::iterator, bool> res =
       dyndep_file_->insert(DyndepFile::value_type(edge, Dyndeps()));
     if (!res.second)
@@ -136,7 +155,8 @@ bool DyndepParser::ParseEdge(string* err) {
     if (!out.empty())
       return lexer_.Error("explicit outputs not supported", err);
   }
-
+#if 0
+  // dynamism add implicit outputs
   // Parse implicit outputs, if any.
   vector<EvalString> outs;
   if (lexer_.PeekToken(Lexer::PIPE)) {
@@ -149,14 +169,14 @@ bool DyndepParser::ParseEdge(string* err) {
       outs.push_back(out);
     }
   }
-
+#endif
   if (!ExpectToken(Lexer::COLON, err))
     return false;
 
   string rule_name;
   if (!lexer_.ReadIdent(&rule_name) || rule_name != "dyndep")
     return lexer_.Error("expected build command name 'dyndep'", err);
-
+#if 0
   // Disallow explicit inputs.
   {
     EvalString in;
@@ -165,7 +185,8 @@ bool DyndepParser::ParseEdge(string* err) {
     if (!in.empty())
       return lexer_.Error("explicit inputs not supported", err);
   }
-
+#endif  
+  // real meat here
   // Parse implicit inputs, if any.
   vector<EvalString> ins;
   if (lexer_.PeekToken(Lexer::PIPE)) {
@@ -178,14 +199,14 @@ bool DyndepParser::ParseEdge(string* err) {
       ins.push_back(in);
     }
   }
-
+#if 0
   // Disallow order-only inputs.
   if (lexer_.PeekToken(Lexer::PIPE2))
     return lexer_.Error("order-only inputs not supported", err);
-
+#endif
   if (!ExpectToken(Lexer::NEWLINE, err))
     return false;
-
+#if 0
   if (lexer_.PeekToken(Lexer::INDENT)) {
     string key;
     EvalString val;
@@ -196,7 +217,7 @@ bool DyndepParser::ParseEdge(string* err) {
     string value = val.Evaluate(&env_);
     dyndeps->restat_ = !value.empty();
   }
-
+#endif
   dyndeps->implicit_inputs_.reserve(ins.size());
   for (vector<EvalString>::iterator i = ins.begin(); i != ins.end(); ++i) {
     string path = i->Evaluate(&env_);
@@ -207,7 +228,7 @@ bool DyndepParser::ParseEdge(string* err) {
     Node* n = state_->GetNode(path, slash_bits);
     dyndeps->implicit_inputs_.push_back(n);
   }
-
+#if 0
   dyndeps->implicit_outputs_.reserve(outs.size());
   for (vector<EvalString>::iterator i = outs.begin(); i != outs.end(); ++i) {
     string path = i->Evaluate(&env_);
@@ -218,6 +239,6 @@ bool DyndepParser::ParseEdge(string* err) {
     Node* n = state_->GetNode(path, slash_bits);
     dyndeps->implicit_outputs_.push_back(n);
   }
-
+#endif
   return true;
 }

@@ -82,7 +82,24 @@ bool ShouldBeColorFul(bool terminal){
   }
 }
 
-
+bool IgnoreGenerator(){
+  static int initialized = -1;
+  if(initialized != -1){
+    return initialized == 0;
+  } else {
+    const char* tmp = getenv("NINJA_IGNORE_GENERATOR");
+    if(tmp){
+      if(strcmp(tmp,"0")==0 || strcmp(tmp,"false")==0){
+        initialized = 1;        
+      } else {
+        initialized = 0;
+      }
+    } else {
+      initialized = 1;
+    }
+    return initialized == 0;
+  }
+}
 void Fatal(const char* msg, ...) {
   va_list ap;
   if (GetAnsiType()){

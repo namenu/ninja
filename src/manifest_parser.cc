@@ -250,6 +250,7 @@ bool ManifestParser::ParseEdge(string* err) {
   if (!rule)
     return lexer_.Error("unknown build rule '" + rule_name + "'", err);
 
+
   for (;;) {
     // XXX should we require one path here?
     EvalString in;
@@ -303,6 +304,12 @@ bool ManifestParser::ParseEdge(string* err) {
     env->AddBinding(key, val.Evaluate(env_));
     has_indent_token = lexer_.PeekToken(Lexer::INDENT);
   }
+
+#if 1 
+  if (IgnoreGenerator() && rule->GetBinding("generator")){
+    return true;
+  }
+#endif
 
   Edge* edge = state_->AddEdge(rule);
   edge->env_ = env;

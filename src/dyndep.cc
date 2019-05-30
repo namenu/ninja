@@ -82,9 +82,9 @@ bool DyndepLoader::UpdateEdge(Edge* edge, Dyndeps const* dyndeps,
   // Add dyndep-discovered bindings to the edge.
   // We know the edge already has its own binding
   // scope because it has a "dyndep" binding.
+#if 0  
   if (dyndeps->restat_)
     edge->env_->AddBinding("restat", "1");
-
   // Add the dyndep-discovered outputs to the edge.
   edge->outputs_.insert(edge->outputs_.end(),
                         dyndeps->implicit_outputs_.begin(),
@@ -101,7 +101,7 @@ bool DyndepLoader::UpdateEdge(Edge* edge, Dyndeps const* dyndeps,
     }
     (*i)->set_in_edge(edge);
   }
-
+#endif
   // Add the dyndep-discovered inputs to the edge.
   edge->inputs_.insert(edge->inputs_.end() - edge->order_only_deps_,
                        dyndeps->implicit_inputs_.begin(),
