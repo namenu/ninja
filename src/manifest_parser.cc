@@ -304,6 +304,12 @@ bool ManifestParser::ParseEdge(string* err) {
     has_indent_token = lexer_.PeekToken(Lexer::INDENT);
   }
 
+#if 1 
+  if (IgnoreGenerator() && rule->GetBinding("generator")){
+    return true;
+  }
+#endif
+
   Edge* edge = state_->AddEdge(rule);
   edge->env_ = env;
 

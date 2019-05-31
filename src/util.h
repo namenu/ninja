@@ -111,7 +111,7 @@ enum AnsiType {
 };
 
 bool ShouldBeColorFul(bool terminal);
-
+bool IgnoreGenerator();
 #ifdef _MSC_VER
 #define snprintf _snprintf
 #define fileno _fileno
