@@ -31,6 +31,7 @@ struct Metric {
   int count;
   /// Total time (in micros) we've spent on the code path.
   int64_t sum;
+  int64_t maximum;
 };
 
 

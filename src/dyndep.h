@@ -25,6 +25,13 @@ struct Node;
 struct State;
 
 /// Store dynamically-discovered dependency information for one edge.
+#if 1 
+struct Dyndeps {
+  Dyndeps() : used_(false){}
+  bool used_;
+  std::vector<Node*> implicit_inputs_;
+};
+#else
 struct Dyndeps {
   Dyndeps() : used_(false), restat_(false) {}
   bool used_;
@@ -33,6 +40,7 @@ struct Dyndeps {
   std::vector<Node*> implicit_outputs_;
 };
 
+#endif
 /// Store data loaded from one dyndep file.  Map from an edge
 /// to its dynamically-discovered dependency information.
 /// This is a struct rather than a typedef so that we can

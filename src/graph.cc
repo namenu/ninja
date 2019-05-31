@@ -319,6 +319,10 @@ bool Edge::AllInputsReady() const {
   return true;
 }
 
+enum FileType {
+  REMOVE_EXT,
+  REMOVE_BASENAME
+};
 /// An Env for an Edge, providing $in and $out.
 struct EdgeEnv : public Env {
   enum EscapeKind { kShellEscape, kDoNotEscape };
@@ -332,6 +336,7 @@ struct EdgeEnv : public Env {
   string MakePathList(vector<Node*>::iterator begin,
                       vector<Node*>::iterator end,
                       char sep);
+  string MakePath(const Node* node, FileType filetype);                    
 
  private:
   vector<string> lookups_;
@@ -341,6 +346,26 @@ struct EdgeEnv : public Env {
 };
 
 string EdgeEnv::LookupVariable(const string& var) {
+  
+#if 1
+  if (var == "in_e") {
+    return MakePath(*(edge_->inputs_.begin()), REMOVE_EXT);
+  }
+  if (var == "in_d") {
+    return MakePath(*(edge_->inputs_.begin()), REMOVE_BASENAME);
+  }
+  if (var == "in") {
+    int explicit_deps_count =
+        edge_->inputs_.size() - edge_->implicit_deps_ - edge_->order_only_deps_;
+    return MakePathList(edge_->inputs_.begin(),
+                        edge_->inputs_.begin() + explicit_deps_count, ' ');
+  }
+  if (var == "out") {
+    int explicit_outs_count = edge_->outputs_.size() - edge_->implicit_outs_;
+    return MakePathList(edge_->outputs_.begin(),
+                        edge_->outputs_.begin() + explicit_outs_count, ' ');
+  }
+#else
   if (var == "in" || var == "in_newline") {
     int explicit_deps_count = edge_->inputs_.size() - edge_->implicit_deps_ -
       edge_->order_only_deps_;
@@ -353,7 +378,7 @@ string EdgeEnv::LookupVariable(const string& var) {
                         edge_->outputs_.begin() + explicit_outs_count,
                         ' ');
   }
-
+#endif
   if (recursive_) {
     vector<string>::const_iterator it;
     if ((it = find(lookups_.begin(), lookups_.end(), var)) != lookups_.end()) {
@@ -397,13 +422,48 @@ string EdgeEnv::MakePathList(vector<Node*>::iterator begin,
   return result;
 }
 
+string transform(const string& path, FileType filetype){
+  switch (filetype) {
+  case REMOVE_EXT:
+    return path.substr(0, path.find_last_of('.'));
+  case REMOVE_BASENAME:
+     size_t pos = path.find_last_of("/\\"); 
+     if(pos == string::npos){
+       return string();
+     }
+     return path.substr(0,pos);
+  }
+  // This could be wrong in extreme cases
+  // long_path/../../'hell\ escaped_file'
+  // It happens rarely in bsb since module name
+  // can not be arbitrary
+}
+
+string EdgeEnv::MakePath(const Node* node, FileType filetype){
+
+  const string& path = node ->PathDecanonicalized();
+  if(escape_in_out_ == kShellEscape){
+      string result;
+#if _WIN32
+      GetWin32EscapedString(path, &result);
+#else
+      GetShellEscapedString(path, &result);
+#endif
+      return transform(result,filetype);
+  } else {
+    return transform(path,filetype);
+  }
+}
+
 string Edge::EvaluateCommand(bool incl_rsp_file) {
   string command = GetBinding("command");
+#if 0  
   if (incl_rsp_file) {
     string rspfile_content = GetBinding("rspfile_content");
     if (!rspfile_content.empty())
       command += ";rspfile=" + rspfile_content;
   }
+#endif  
   return command;
 }
 

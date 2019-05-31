@@ -185,7 +185,7 @@ bool DyndepParser::ParseEdge(string* err) {
 
   if (!ExpectToken(Lexer::NEWLINE, err))
     return false;
-
+#if 0
   if (lexer_.PeekToken(Lexer::INDENT)) {
     string key;
     EvalString val;
@@ -196,7 +196,7 @@ bool DyndepParser::ParseEdge(string* err) {
     string value = val.Evaluate(&env_);
     dyndeps->restat_ = !value.empty();
   }
-
+#endif
   dyndeps->implicit_inputs_.reserve(ins.size());
   for (vector<EvalString>::iterator i = ins.begin(); i != ins.end(); ++i) {
     string path = i->Evaluate(&env_);
@@ -207,7 +207,7 @@ bool DyndepParser::ParseEdge(string* err) {
     Node* n = state_->GetNode(path, slash_bits);
     dyndeps->implicit_inputs_.push_back(n);
   }
-
+#if 0
   dyndeps->implicit_outputs_.reserve(outs.size());
   for (vector<EvalString>::iterator i = outs.begin(); i != outs.end(); ++i) {
     string path = i->Evaluate(&env_);
@@ -218,6 +218,6 @@ bool DyndepParser::ParseEdge(string* err) {
     Node* n = state_->GetNode(path, slash_bits);
     dyndeps->implicit_outputs_.push_back(n);
   }
-
+#endif
   return true;
 }

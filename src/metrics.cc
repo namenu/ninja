@@ -87,6 +87,7 @@ ScopedMetric::~ScopedMetric() {
   metric_->count++;
   int64_t dt = TimerToMicros(HighResTimer() - start_);
   metric_->sum += dt;
+  metric_->maximum = max(dt,metric_->maximum );
 }
 
 Metric* Metrics::NewMetric(const string& name) {
@@ -94,6 +95,7 @@ Metric* Metrics::NewMetric(const string& name) {
   metric->name = name;
   metric->count = 0;
   metric->sum = 0;
+  metric->maximum = 0; 
   metrics_.push_back(metric);
   return metric;
 }
@@ -105,15 +107,15 @@ void Metrics::Report() {
     width = max((int)(*i)->name.size(), width);
   }
 
-  printf("%-*s\t%-6s\t%-9s\t%s\n", width,
-         "metric", "count", "avg (us)", "total (ms)");
+  printf("%-*s\t%-6s\t%-9s\t%-9s\t%s\n", width,
+         "metric", "count", "avg (us)", "maximum (us)","total (ms)");
   for (vector<Metric*>::iterator i = metrics_.begin();
        i != metrics_.end(); ++i) {
     Metric* metric = *i;
     double total = metric->sum / (double)1000;
     double avg = metric->sum / (double)metric->count;
-    printf("%-*s\t%-6d\t%-8.1f\t%.1f\n", width, metric->name.c_str(),
-           metric->count, avg, total);
+    printf("%-*s\t%-6d\t%-8.1f\t%-8.1f\t%.1f\n", width, metric->name.c_str(),
+           metric->count, avg, (double)metric->maximum,total);
   }
 }
 
