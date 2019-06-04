@@ -31,7 +31,16 @@ DyndepParser::DyndepParser(State* state, FileReader* file_reader,
 bool DyndepParser::Parse(const string& filename, const string& input,
                          string* err) {
   lexer_.Start(filename, input);
-
+#if 1 
+  for (;;) {
+    if(lexer_.EndAfterEatWhiteSpace()){
+      return true;
+    }
+    if(!ParseEdge(err)){
+      return false;
+    }
+  }
+#else
   // Require a supported ninja_dyndep_version value immediately so
   // we can exit before encountering any syntactic surprises.
   bool haveDyndepVersion = false;
@@ -69,6 +78,7 @@ bool DyndepParser::Parse(const string& filename, const string& input,
                           err);
     }
   }
+#endif
   return false;  // not reached
 }
 
@@ -106,6 +116,11 @@ bool DyndepParser::ParseEdge(string* err) {
   // We will record its dynamically-discovered dependency information.
   Dyndeps* dyndeps = NULL;
   {
+    string path;
+    if(!lexer_.ReadSimplePath(&path)){
+      return lexer_.Error("expected path",err);      
+    }
+#if 0      
     EvalString out0;
     if (!lexer_.ReadPath(&out0, err))
       return false;
@@ -113,6 +128,7 @@ bool DyndepParser::ParseEdge(string* err) {
       return lexer_.Error("expected path", err);
 
     string path = out0.Evaluate(&env_);
+#endif    
     string path_err;
     uint64_t slash_bits;
     if (!CanonicalizePath(&path, &slash_bits, &path_err))
@@ -127,7 +143,7 @@ bool DyndepParser::ParseEdge(string* err) {
       return lexer_.Error("multiple statements for '" + path + "'", err);
     dyndeps = &res.first->second;
   }
-
+#if 0
   // Disallow explicit outputs.
   {
     EvalString out;
@@ -149,10 +165,10 @@ bool DyndepParser::ParseEdge(string* err) {
       outs.push_back(out);
     }
   }
-
+#endif
   if (!ExpectToken(Lexer::COLON, err))
     return false;
-
+#if 0
   string rule_name;
   if (!lexer_.ReadIdent(&rule_name) || rule_name != "dyndep")
     return lexer_.Error("expected build command name 'dyndep'", err);
@@ -165,8 +181,17 @@ bool DyndepParser::ParseEdge(string* err) {
     if (!in.empty())
       return lexer_.Error("explicit inputs not supported", err);
   }
-
+#endif
   // Parse implicit inputs, if any.
+  vector<string>ins;
+  for (;;) {
+    string in;
+    if (!lexer_.ReadSimplePath(&in)) {
+      break;
+    }
+    ins.push_back(in);
+  }
+#if 0    
   vector<EvalString> ins;
   if (lexer_.PeekToken(Lexer::PIPE)) {
     for (;;) {
@@ -182,7 +207,7 @@ bool DyndepParser::ParseEdge(string* err) {
   // Disallow order-only inputs.
   if (lexer_.PeekToken(Lexer::PIPE2))
     return lexer_.Error("order-only inputs not supported", err);
-
+#endif  
   if (!ExpectToken(Lexer::NEWLINE, err))
     return false;
 #if 0
@@ -198,8 +223,12 @@ bool DyndepParser::ParseEdge(string* err) {
   }
 #endif
   dyndeps->implicit_inputs_.reserve(ins.size());
-  for (vector<EvalString>::iterator i = ins.begin(); i != ins.end(); ++i) {
+  for (vector<string>::iterator i = ins.begin(); i != ins.end(); ++i) {
+#if 0
     string path = i->Evaluate(&env_);
+#else
+    string path = *i;
+#endif    
     string path_err;
     uint64_t slash_bits;
     if (!CanonicalizePath(&path, &slash_bits, &path_err))
