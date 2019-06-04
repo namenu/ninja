@@ -80,6 +80,9 @@ struct Lexer {
     return ReadEvalString(path, true, err);
   }
 
+  bool ReadSimplePath(string *path);
+  bool EndAfterEatWhiteSpace();
+  
   /// Read the value side of a var = value line (complete with $escapes).
   /// Returns false only on error.
   bool ReadVarValue(EvalString* value, string* err) {

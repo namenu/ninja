@@ -49,10 +49,14 @@ bool DyndepLoader::LoadDyndeps(Node* node, DyndepFile* ddf,
 
     DyndepFile::iterator ddi = ddf->find(edge);
     if (ddi == ddf->end()) {
+#if 1       
+      continue;
+#else
       *err = ("'" + edge->outputs_[0]->path() + "' "
               "not mentioned in its dyndep file "
               "'" + node->path() + "'");
       return false;
+#endif      
     }
 
     ddi->second.used_ = true;

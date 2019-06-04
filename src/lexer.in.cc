@@ -180,6 +180,21 @@ void Lexer::EatWhitespace() {
   }
 }
 
+bool Lexer::EndAfterEatWhiteSpace(){
+  const char* p = ofs_;
+  const char* q;
+  for (;;) {
+    ofs_ = p;
+    /*!re2c
+    [ ]+    { continue; }
+    "$\r\n" { continue; }
+    "$\n"   { continue; }
+    nul     { return true; }
+    [^]     { return false; }
+    */
+  }
+}
+
 bool Lexer::ReadIdent(string* out) {
   const char* p = ofs_;
   const char* start;
@@ -187,6 +202,28 @@ bool Lexer::ReadIdent(string* out) {
     start = p;
     /*!re2c
     varname {
+      out->assign(start, p - start);
+      break;
+    }
+    [^] {
+      last_token_ = start;
+      return false;
+    }
+    */
+  }
+  last_token_ = start;
+  ofs_ = p;
+  EatWhitespace();
+  return true;
+}
+
+bool Lexer::ReadSimplePath(string* out) {
+  const char* p = ofs_;
+  const char* start;
+  for (;;) {
+    start = p;
+    /*!re2c
+    [a-zA-Z0-9+,/_:.~()}{%@=!\x80-\xFF-]+ {
       out->assign(start, p - start);
       break;
     }

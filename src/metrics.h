@@ -88,6 +88,8 @@ struct Stopwatch {
       g_metrics ? g_metrics->NewMetric(name) : NULL;                    \
   ScopedMetric metrics_h_scoped(metrics_h_metric);
 
+// #define METRIC_RECORD(name) do {} while(0)
+
 extern Metrics* g_metrics;
 
 #endif // NINJA_METRICS_H_
