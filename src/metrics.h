@@ -83,13 +83,14 @@ struct Stopwatch {
 
 /// The primary interface to metrics.  Use METRIC_RECORD("foobar") at the top
 /// of a function to get timing stats recorded for each call of the function.
+#if 0
 #define METRIC_RECORD(name)                                             \
   static Metric* metrics_h_metric =                                     \
       g_metrics ? g_metrics->NewMetric(name) : NULL;                    \
   ScopedMetric metrics_h_scoped(metrics_h_metric);
-
-// #define METRIC_RECORD(name) do {} while(0)
-
+#else
+#define METRIC_RECORD(name) do {} while(0)
+#endif
 extern Metrics* g_metrics;
 
 #endif // NINJA_METRICS_H_
