@@ -223,7 +223,7 @@ bool Lexer::ReadSimplePath(string* out) {
   for (;;) {
     start = p;
     /*!re2c
-    [a-zA-Z0-9+,/_:.~()}{%@=!\x80-\xFF-]+ {
+    [a-zA-Z0-9+,/_:.~()}{%@=!\x5c\x80-\xFF-]+ {
       out->assign(start, p - start);
       break;
     }
