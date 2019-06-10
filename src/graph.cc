@@ -433,6 +433,7 @@ string transform(const string& path, FileType filetype){
      }
      return path.substr(0,pos);
   }
+  return string(); // fix warning-error
   // This could be wrong in extreme cases
   // long_path/../../'hell\ escaped_file'
   // It happens rarely in bsb since module name
