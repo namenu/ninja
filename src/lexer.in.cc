@@ -182,13 +182,12 @@ void Lexer::EatWhitespace() {
 
 bool Lexer::EndAfterEatWhiteSpace(){
   const char* p = ofs_;
-  const char* q;
   for (;;) {
     ofs_ = p;
     /*!re2c
     [ ]+    { continue; }
-    "$\r\n" { continue; }
-    "$\n"   { continue; }
+    "\r\n"  { continue; }
+    "\n"    { continue; }
     nul     { return true; }
     [^]     { return false; }
     */
