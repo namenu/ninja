@@ -1128,7 +1128,7 @@ int NinjaMain::RunBuild(int argc, char** argv) {
   disk_interface_.AllowStatCache(false);
 
   if (builder.AlreadyUpToDate()) {
-    printf("ninja: no work to do.\n");
+    printf("bsb: no work to do.\n");
     return 0;
   }
 
@@ -1136,13 +1136,13 @@ int NinjaMain::RunBuild(int argc, char** argv) {
 #if 0
     printf("ninja: build stopped: %s.\n", err.c_str());
 #else     
-  if(config_.verbosity == BuildConfig::VERBOSE){
-    if(ShouldBeColorFul(false)){
-      printf("\x1b[31m" "FAILED:" "\x1b[0m" " %s.\n", err.c_str());    
-    } else {
-      printf("FAILED: %s.\n", err.c_str());    
-    }
+
+  if(ShouldBeColorFul(false)){
+    printf("\x1b[31m" "FAILED:" "\x1b[0m" " %s.\n", err.c_str());    
+  } else {
+    printf("FAILED: %s.\n", err.c_str());    
   }
+
 #endif
     if (err.find("interrupted by user") != string::npos) {
       return 2;
