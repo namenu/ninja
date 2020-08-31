@@ -130,4 +130,6 @@ string GetLastErrorString();
 NORETURN void Win32Fatal(const char* function, const char* hint = NULL);
 #endif
 
+extern bool BUILD_HAS_SOFT_FAILURE;
+
 #endif  // NINJA_UTIL_H_

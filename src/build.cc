@@ -892,6 +892,10 @@ bool Builder::Build(string* err) {
   }
 
   status_->BuildFinished();
+  if(BUILD_HAS_SOFT_FAILURE){
+    *err = "errors found";
+    return false;
+  }
   return true;
 }
 

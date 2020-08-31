@@ -187,7 +187,10 @@ ExitStatus Subprocess::Finish() {
 
   CloseHandle(child_);
   child_ = NULL;
-
+  if(exit_code == 77){
+    BUILD_HAS_SOFT_FAILURE = true;  
+    return ExitSuccess;
+  }
   return exit_code == 0              ? ExitSuccess :
          exit_code == CONTROL_C_EXIT ? ExitInterrupted :
                                        ExitFailure;

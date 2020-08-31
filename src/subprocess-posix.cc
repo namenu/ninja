@@ -149,6 +149,10 @@ ExitStatus Subprocess::Finish() {
 
   if (WIFEXITED(status)) {
     int exit = WEXITSTATUS(status);
+    if(exit == 77){
+      BUILD_HAS_SOFT_FAILURE = true;
+      return ExitSuccess;
+    }
     if (exit == 0)
       return ExitSuccess;
   } else if (WIFSIGNALED(status)) {

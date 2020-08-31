@@ -682,3 +682,4 @@ bool Truncate(const string& path, size_t size, string* err) {
   return true;
 }
 
+bool BUILD_HAS_SOFT_FAILURE = false;
