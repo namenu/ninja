@@ -200,8 +200,10 @@ TimeStamp RealDiskInterface::Stat(const string& path, string* err) const {
   // Some users (Flatpak) set mtime to 0, this should be harmless
   // and avoids conflicting with our return value of 0 meaning
   // that it doesn't exist.
+#if 0
   if (st.st_mtime == 0)
     return 1;
+#endif
 #if defined(_AIX)
   return (int64_t)st.st_mtime * 1000000000LL + st.st_mtime_n;
 #elif defined(__APPLE__)
