@@ -4,7 +4,7 @@ var ext = os.platform();
 if (process.argv.includes("-build")) {
   if (ext === "win32") {
     // running on visual studio command line
-    child.execSync("c:\\Python27\\python.exe configure.py --bootstrap");
+    child.execSync("python configure.py --bootstrap");
   } else {
     child.execSync(`./configure.py --bootstrap`, { stdio: [0, 1, 2] });
     child.execSync(`strip ninja`, { stdio: [0, 1, 2] });
