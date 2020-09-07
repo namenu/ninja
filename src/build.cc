@@ -87,7 +87,7 @@ BuildStatus::BuildStatus(const BuildConfig& config)
   if (config_.verbosity != BuildConfig::NORMAL)
     printer_.set_smart_terminal(false);
 
-  progress_status_format_ = getenv("NINJA_STATUS");
+  // progress_status_format_ = getenv("NINJA_STATUS");
   if (!progress_status_format_)
     progress_status_format_ = "[%f/%t] ";
 }
@@ -126,8 +126,10 @@ void BuildStatus::BuildEdgeFinished(Edge* edge,
   if (edge->use_console())
     printer_.SetConsoleLocked(false);
 
+#if 0
   if (config_.verbosity == BuildConfig::QUIET)
     return;
+#endif
 
   if (!edge->use_console())
     PrintStatus(edge, kEdgeFinished);
@@ -143,7 +145,9 @@ void BuildStatus::BuildEdgeFinished(Edge* edge,
     } else {
       printer_.PrintOnNewLine("FAILED: " + outputs + "\n");
     }
-    printer_.PrintOnNewLine(edge->EvaluateCommand() + "\n");
+    if (config_.verbosity == BuildConfig::VERBOSE) {
+      printer_.PrintOnNewLine(edge->EvaluateCommand() + "\n");
+    }
   }
 
   if (!output.empty()) {

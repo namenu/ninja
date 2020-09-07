@@ -1140,7 +1140,9 @@ int NinjaMain::RunBuild(int argc, char** argv) {
   disk_interface_.AllowStatCache(false);
 
   if (builder.AlreadyUpToDate()) {
-    printf("bsb: no work to do.\n");
+    if (config_.verbosity == BuildConfig::VERBOSE) {
+      printf("bsb: no work to do.\n");
+    }
     return 0;
   }
 
