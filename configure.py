@@ -414,13 +414,13 @@ if platform.is_msvc():
     n.rule('cxx',
         command='$cxx $cflags -c $in /Fo$out /Fd' + built('$pdb'),
         description='CXX $out',
-        deps='msvc'  # /showIncludes is included in $cflags.
+        # deps='msvc'  # /showIncludes is included in $cflags.
     )
 else:
     n.rule('cxx',
         command='$cxx -MMD -MT $out -MF $out.d $cflags -c $in -o $out',
         depfile='$out.d',
-        deps='gcc',
+        # deps='gcc',
         description='CXX $out')
 n.newline()
 
