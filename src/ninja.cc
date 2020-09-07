@@ -1059,6 +1059,7 @@ bool NinjaMain::OpenBuildLog(bool recompact_only) {
 /// Open the deps log: load it, then open for writing.
 /// @return false on error.
 bool NinjaMain::OpenDepsLog(bool recompact_only) {
+#if 0
   string path = ".ninja_deps";
   if (!build_dir_.empty())
     path = build_dir_ + "/" + path;
@@ -1087,7 +1088,7 @@ bool NinjaMain::OpenDepsLog(bool recompact_only) {
       return false;
     }
   }
-
+#endif
   return true;
 }
 
