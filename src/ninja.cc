@@ -123,6 +123,7 @@ struct NinjaMain : public BuildLogUser {
   int ToolTargets(const Options* options, int argc, char* argv[]);
   int ToolCommands(const Options* options, int argc, char* argv[]);
   int ToolClean(const Options* options, int argc, char* argv[]);
+  int ToolCleanDead(const Options* options, int argc, char* argv[]);
   int ToolCompilationDatabase(const Options* options, int argc, char* argv[]);
   int ToolRecompact(const Options* options, int argc, char* argv[]);
   int ToolUrtle(const Options* options, int argc, char** argv);
@@ -154,7 +155,7 @@ struct NinjaMain : public BuildLogUser {
 
   virtual bool IsPathDead(StringPiece s) const {
     Node* n = state_.LookupNode(s);
-    if (!n || !n->in_edge())
+    if (n && n->in_edge())
       return false;
     // Just checking n isn't enough: If an old output is both in the build log
     // and in the deps log, it will have a Node object in state_.  (It will also
@@ -719,6 +720,11 @@ int NinjaMain::ToolClean(const Options* options, int argc, char* argv[]) {
   }
 }
 
+int NinjaMain::ToolCleanDead(const Options* options, int argc, char* argv[]) {
+  Cleaner cleaner(&state_, config_, &disk_interface_);
+  return cleaner.CleanDead(build_log_.entries());
+}
+
 void EncodeJSONString(const char *str) {
   while (*str) {
     if (*str == '"' || *str == '\\')
@@ -839,6 +845,7 @@ int NinjaMain::ToolRecompact(const Options* options, int argc, char* argv[]) {
   return 0;
 }
 
+#if 0
 int NinjaMain::ToolUrtle(const Options* options, int argc, char** argv) {
   // RLE encoded.
   const char* urtle =
@@ -864,6 +871,7 @@ int NinjaMain::ToolUrtle(const Options* options, int argc, char** argv) {
   }
   return 0;
 }
+#endif
 
 /// Find the function to execute for \a tool_name and return it via \a func.
 /// Returns a Tool, or NULL if Ninja should exit.
@@ -893,8 +901,12 @@ const Tool* ChooseTool(const string& tool_name) {
       Tool::RUN_AFTER_LOAD, &NinjaMain::ToolRecompact },
     { "rules",  "list all rules",
       Tool::RUN_AFTER_LOAD, &NinjaMain::ToolRules },
+    { "cleandead",  "clean built files that are no longer produced by the manifest",
+      Tool::RUN_AFTER_LOGS, &NinjaMain::ToolCleanDead },
+#if 0      
     { "urtle", NULL,
       Tool::RUN_AFTER_FLAGS, &NinjaMain::ToolUrtle },
+#endif      
     { NULL, NULL, Tool::RUN_AFTER_FLAGS, NULL }
   };
 
@@ -1298,14 +1310,14 @@ NORETURN void real_main(int argc, char** argv) {
       Fatal("chdir to '%s' - %s", options.working_dir, strerror(errno));
     }
   }
-
+#if 0
   if (options.tool && options.tool->when == Tool::RUN_AFTER_FLAGS) {
     // None of the RUN_AFTER_FLAGS actually use a NinjaMain, but it's needed
     // by other tools.
     NinjaMain ninja(ninja_command, config);
     exit((ninja.*options.tool->func)(&options, argc, argv));
   }
-
+#endif
   // Limit number of rebuilds, to prevent infinite loops.
   const int kCycleLimit = 100;
   for (int cycle = 1; cycle <= kCycleLimit; ++cycle) {
@@ -1336,7 +1348,10 @@ NORETURN void real_main(int argc, char** argv) {
 
     if (options.tool && options.tool->when == Tool::RUN_AFTER_LOGS)
       exit((ninja.*options.tool->func)(&options, argc, argv));
-
+    
+    //TODO: make it configurable    
+    ninja.ToolCleanDead(&options,argc,argv);
+    
     // Attempt to rebuild the manifest before building anything else
     if (ninja.RebuildManifest(options.input_file, &err)) {
       // In dry_run mode the regeneration will succeed without changing the
