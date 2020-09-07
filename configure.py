@@ -105,9 +105,7 @@ class Platform(object):
                                   'dragonfly')
 
     def supports_ninja_browse(self):
-        return (not self.is_windows()
-                and not self.is_solaris()
-                and not self.is_aix())
+        return False
 
     def can_rebuild_in_place(self):
         return not (self.is_windows() or self.is_aix())
