@@ -36,3 +36,4 @@ TAGS
 # Visual Studio Code project files
 /.vscode/
 /.ccls-cache/
+*.tar.gz
