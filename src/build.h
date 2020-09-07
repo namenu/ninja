@@ -224,10 +224,11 @@ struct Builder {
   BuildStatus* status_;
 
  private:
+#if 0 
    bool ExtractDeps(CommandRunner::Result* result, const string& deps_type,
                     const string& deps_prefix, vector<Node*>* deps_nodes,
                     string* err);
-
+#endif
   DiskInterface* disk_interface_;
   DependencyScan scan_;
 

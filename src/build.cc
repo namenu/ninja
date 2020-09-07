@@ -943,6 +943,7 @@ bool Builder::FinishCommand(CommandRunner::Result* result, string* err) {
   // extraction itself can fail, which makes the command fail from a
   // build perspective.
   vector<Node*> deps_nodes;
+#if 0  
   string deps_type = edge->GetBinding("deps");
   const string deps_prefix = edge->GetBinding("msvc_deps_prefix");
   if (!deps_type.empty()) {
@@ -956,7 +957,7 @@ bool Builder::FinishCommand(CommandRunner::Result* result, string* err) {
       result->status = ExitFailure;
     }
   }
-
+#endif
   int start_time, end_time;
   status_->BuildEdgeFinished(edge, result->success(), result->output,
                              &start_time, &end_time);
@@ -1003,7 +1004,7 @@ bool Builder::FinishCommand(CommandRunner::Result* result, string* err) {
       }
 
       string depfile = edge->GetUnescapedDepfile();
-      if (restat_mtime != 0 && deps_type.empty() && !depfile.empty()) {
+      if (restat_mtime != 0 && /* deps_type.empty() && */ !depfile.empty()) {
         TimeStamp depfile_mtime = disk_interface_->Stat(depfile, err);
         if (depfile_mtime == -1)
           return false;
@@ -1035,6 +1036,7 @@ bool Builder::FinishCommand(CommandRunner::Result* result, string* err) {
     }
   }
 
+#if 0
   if (!deps_type.empty() && !config_.dry_run) {
     assert(edge->outputs_.size() == 1 && "should have been rejected by parser");
     Node* out = edge->outputs_[0];
@@ -1046,9 +1048,11 @@ bool Builder::FinishCommand(CommandRunner::Result* result, string* err) {
       return false;
     }
   }
+#endif
+
   return true;
 }
-
+#if 0
 bool Builder::ExtractDeps(CommandRunner::Result* result,
                           const string& deps_type,
                           const string& deps_prefix,
@@ -1117,7 +1121,7 @@ bool Builder::ExtractDeps(CommandRunner::Result* result,
 
   return true;
 }
-
+#endif
 bool Builder::LoadDyndeps(Node* node, string* err) {
   status_->BuildLoadDyndeps();
 
