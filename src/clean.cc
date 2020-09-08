@@ -124,20 +124,36 @@ int Cleaner::CleanAll(bool generator) {
   return status_;
 }
 
-int Cleaner::CleanDead(const BuildLog::Entries& entries) {
-  Reset();
-  
-  for (BuildLog::Entries::const_iterator i = entries.begin(); i != entries.end(); ++i) {
+void Cleaner::CleanDead(const BuildLog::Entries& entries) {
+  // Reset();
+  set<string> staleFiles ;
+  for (BuildLog::Entries::const_iterator i = entries.begin();
+       i != entries.end(); ++i) {
     Node* n = state_->LookupNode(i->first);
     if (!n || !n->in_edge()) {
-      Remove(i->first.AsString());
+      string toDelete = i->first.AsString();
+      string::size_type i = toDelete.rfind('.', toDelete.length());
+      if (i != string::npos) {
+        string ext = toDelete.substr(i);
+        if (ext == ".js") {
+          int ret = RemoveFile(toDelete);
+          if(ret == 0){
+            staleFiles.insert(toDelete);
+          }
+        }
+      }
     }
   }
-  if(cleaned_files_count_ != 0){
-    PrintHeader();
-    PrintFooter();
+
+  if(!staleFiles.empty()){
+    if(config_.verbosity != BuildConfig::QUIET){
+      printf("Remove staled output\n");
+      for(set<string>::const_iterator i = staleFiles.begin(); i != staleFiles.end(); ++i){
+        printf("%s ",i->c_str());
+      }
+      printf("\nRemove staled done\n");
+    }
   }
-  return status_;
 }
 
 void Cleaner::DoCleanTarget(Node* target) {
