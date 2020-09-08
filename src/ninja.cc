@@ -722,7 +722,8 @@ int NinjaMain::ToolClean(const Options* options, int argc, char* argv[]) {
 
 int NinjaMain::ToolCleanDead(const Options* options, int argc, char* argv[]) {
   Cleaner cleaner(&state_, config_, &disk_interface_);
-  return cleaner.CleanDead(build_log_.entries());
+  cleaner.CleanDead(build_log_.entries());
+  return 0;
 }
 
 void EncodeJSONString(const char *str) {

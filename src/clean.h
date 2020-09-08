@@ -62,7 +62,7 @@ struct Cleaner {
   /// Clean the files produced by previous builds that are no longer in the
   /// manifest.
   /// @return non-zero if an error occurs.
-  int CleanDead(const BuildLog::Entries& entries);
+  void CleanDead(const BuildLog::Entries& entries);
 
   /// @return the number of file cleaned.
   int cleaned_files_count() const {
