@@ -81,7 +81,7 @@ bool DyndepParser::Parse(const string& filename, const string& input,
 #endif
   return false;  // not reached
 }
-
+#if 0
 bool DyndepParser::ParseDyndepVersion(string* err) {
   string name;
   EvalString let_value;
@@ -110,7 +110,7 @@ bool DyndepParser::ParseLet(string* key, EvalString* value, string* err) {
     return false;
   return true;
 }
-
+#endif
 bool DyndepParser::ParseEdge(string* err) {
   // Parse one explicit output.  We expect it to already have an edge.
   // We will record its dynamically-discovered dependency information.
