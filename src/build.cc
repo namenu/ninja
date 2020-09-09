@@ -121,7 +121,9 @@ void BuildStatus::BuildEdgeFinished(Edge* edge,
                                     bool success,
                                     const string& output,
                                     int* start_time,
-                                    int* end_time) {
+                                    int* end_time,
+                                    vector<string> & compiler_log 
+                                    ) {
   int64_t now = GetTimeMillis();
 
   ++finished_edges_;
@@ -171,8 +173,9 @@ void BuildStatus::BuildEdgeFinished(Edge* edge,
     // only a few hundred available on some systems, and ninja can launch
     // thousands of parallel compile commands.)
     string final_output;
+    string stripped = StripAnsiEscapeCodes(output);
     if (!printer_.supports_color())
-      final_output = StripAnsiEscapeCodes(output);
+      final_output = stripped;
     else
       final_output = output;
 
@@ -186,6 +189,7 @@ void BuildStatus::BuildEdgeFinished(Edge* edge,
 #ifdef _WIN32
     _setmode(_fileno(stdout), _O_TEXT);  // End Windows extra CR fix
 #endif
+    compiler_log.push_back(stripped);
   }
 }
 
@@ -782,6 +786,15 @@ void Builder::Cleanup() {
         disk_interface_->RemoveFile(depfile);
     }
   }
+  
+  FILE* buf = fopen(".compiler.log","w");
+  setvbuf(buf,NULL,_IOLBF,BUFSIZ);
+  SetCloseOnExec(fileno(buf));
+  for(vector<string>::iterator i = compiler_log_.begin(); i != compiler_log_.end();++i){
+    fputs(i->c_str(),buf);
+  }
+  fclose(buf);
+  buf = NULL;   
 }
 
 Node* Builder::AddTarget(const string& name, string* err) {
@@ -969,7 +982,7 @@ bool Builder::FinishCommand(CommandRunner::Result* result, string* err) {
 #endif
   int start_time, end_time;
   status_->BuildEdgeFinished(edge, result->success(), result->output,
-                             &start_time, &end_time);
+                             &start_time, &end_time, compiler_log_);
 
   // The rest of this function only applies to successful commands.
   if (!result->success()) {

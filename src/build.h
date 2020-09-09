@@ -214,6 +214,7 @@ struct Builder {
   bool LoadDyndeps(Node* node, string* err);
 
   State* state_;
+  vector<string> compiler_log_;
   const BuildConfig& config_;
   Plan plan_;
 #if __cplusplus < 201703L
@@ -243,7 +244,7 @@ struct BuildStatus {
   void PlanHasTotalEdges(int total);
   void BuildEdgeStarted(Edge* edge);
   void BuildEdgeFinished(Edge* edge, bool success, const string& output,
-                         int* start_time, int* end_time);
+                         int* start_time, int* end_time, vector<string>&);
   void BuildLoadDyndeps();
   void BuildStarted();
   void BuildFinished();
