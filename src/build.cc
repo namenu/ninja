@@ -30,10 +30,14 @@
 #endif
 
 #include "build_log.h"
+#if 0
 #include "clparser.h"
+#endif
 #include "debug_flags.h"
+#if 0
 #include "depfile_parser.h"
 #include "deps_log.h"
+#endif
 #include "disk_interface.h"
 #include "graph.h"
 #include "state.h"
