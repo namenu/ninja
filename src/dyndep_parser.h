@@ -34,9 +34,10 @@ struct DyndepParser: public Parser {
 private:
   /// Parse a file, given its contents as a string.
   bool Parse(const string& filename, const string& input, string* err);
-
+#if 0
   bool ParseDyndepVersion(string* err);
   bool ParseLet(string* key, EvalString* val, string* err);
+#endif  
   bool ParseEdge(string* err);
 
   DyndepFile* dyndep_file_;
