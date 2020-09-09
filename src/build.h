@@ -252,7 +252,7 @@ struct BuildStatus {
     kEdgeStarted,
     kEdgeFinished,
   };
-
+#if 0
   /// Format the progress status string by replacing the placeholders.
   /// See the user manual for more information about the available
   /// placeholders.
@@ -260,7 +260,7 @@ struct BuildStatus {
   /// @param status The status of the edge.
   string FormatProgressStatus(const char* progress_status_format,
                               EdgeStatus status) const;
-
+#endif
  private:
   void PrintStatus(Edge* edge, EdgeStatus status);
 
@@ -277,10 +277,10 @@ struct BuildStatus {
 
   /// Prints progress output.
   LinePrinter printer_;
-
+#if 0
   /// The custom progress status format to use.
   const char* progress_status_format_;
-
+#endif
   template<size_t S>
   void SnprintfRate(double rate, char(&buf)[S], const char* format) const {
     if (rate == -1)
