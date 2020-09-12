@@ -384,7 +384,7 @@ bool ManifestParser::ParseEdge(string* err) {
       }
     }
   }
-
+#if 0
   // Multiple outputs aren't (yet?) supported with depslog.
   string deps_type = edge->GetBinding("deps");
   if (!deps_type.empty() && edge->outputs_.size() > 1) {
@@ -392,7 +392,7 @@ bool ManifestParser::ParseEdge(string* err) {
                         "bring this up on the mailing list if it affects you",
                         err);
   }
-
+#endif
   // Lookup, validate, and save any dyndep binding.  It will be used later
   // to load generated dependency information dynamically, but it must
   // be one of our manifest-specified inputs.

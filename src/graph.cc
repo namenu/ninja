@@ -562,10 +562,11 @@ void Node::Dump(const char* prefix) const {
 }
 
 bool ImplicitDepLoader::LoadDeps(Edge* edge, string* err) {
+#if 0  
   string deps_type = edge->GetBinding("deps");
   if (!deps_type.empty())
     return LoadDepsFromLog(edge, err);
-
+#endif
   string depfile = edge->GetUnescapedDepfile();
   if (!depfile.empty())
     return LoadDepFile(edge, depfile, err);
@@ -641,7 +642,7 @@ bool ImplicitDepLoader::LoadDepFile(Edge* edge, const string& path,
 
   return true;
 }
-
+#if 0
 bool ImplicitDepLoader::LoadDepsFromLog(Edge* edge, string* err) {
   // NOTE: deps are only supported for single-target edges.
   Node* output = edge->outputs_[0];
@@ -668,7 +669,7 @@ bool ImplicitDepLoader::LoadDepsFromLog(Edge* edge, string* err) {
   }
   return true;
 }
-
+#endif
 vector<Node*>::iterator ImplicitDepLoader::PreallocateSpace(Edge* edge,
                                                             int count) {
   edge->inputs_.insert(edge->inputs_.end() - edge->order_only_deps_,

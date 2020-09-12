@@ -117,7 +117,9 @@ struct NinjaMain : public BuildLogUser {
   // The various subcommands, run via "-t XXX".
   int ToolGraph(const Options* options, int argc, char* argv[]);
   int ToolQuery(const Options* options, int argc, char* argv[]);
+#if 0  
   int ToolDeps(const Options* options, int argc, char* argv[]);
+#endif  
   int ToolBrowse(const Options* options, int argc, char* argv[]);
   int ToolMSVC(const Options* options, int argc, char* argv[]);
   int ToolTargets(const Options* options, int argc, char* argv[]);
@@ -482,7 +484,7 @@ int ToolTargetsList(State* state) {
   }
   return 0;
 }
-
+#if 0
 int NinjaMain::ToolDeps(const Options* options, int argc, char** argv) {
   vector<Node*> nodes;
   if (argc == 0) {
@@ -522,7 +524,7 @@ int NinjaMain::ToolDeps(const Options* options, int argc, char** argv) {
 
   return 0;
 }
-
+#endif
 int NinjaMain::ToolTargets(const Options* options, int argc, char* argv[]) {
   int depth = 1;
   if (argc >= 1) {
@@ -888,8 +890,10 @@ const Tool* ChooseTool(const string& tool_name) {
       Tool::RUN_AFTER_LOAD, &NinjaMain::ToolClean },
     { "commands", "list all commands required to rebuild given targets",
       Tool::RUN_AFTER_LOAD, &NinjaMain::ToolCommands },
+#if 0      
     { "deps", "show dependencies stored in the deps log",
       Tool::RUN_AFTER_LOGS, &NinjaMain::ToolDeps },
+#endif
     { "graph", "output graphviz dot file for targets",
       Tool::RUN_AFTER_LOAD, &NinjaMain::ToolGraph },
     { "query", "show inputs/outputs for a path",
