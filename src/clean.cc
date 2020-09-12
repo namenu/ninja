@@ -135,7 +135,7 @@ void Cleaner::CleanDead(const BuildLog::Entries& entries) {
       string::size_type i = toDelete.rfind('.', toDelete.length());
       if (i != string::npos) {
         string ext = toDelete.substr(i);
-        if (ext == ".js") {
+        if (ext == ".js" || ext == ".mjs" || ext == ".cjs") {
           int ret = RemoveFile(toDelete);
           if(ret == 0){
             staleFiles.insert(toDelete);
