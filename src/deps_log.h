@@ -25,7 +25,9 @@ using namespace std;
 
 struct Node;
 struct State;
-
+#if 1 
+struct DepsLog {};
+#else
 /// As build commands run they can output extra dependency information
 /// (e.g. header dependencies for C source) dynamically.  DepsLog collects
 /// that information at build time and uses it for subsequent builds.
@@ -119,5 +121,5 @@ struct DepsLog {
 
   friend struct DepsLogTest;
 };
-
+#endif
 #endif  // NINJA_DEPS_LOG_H_
