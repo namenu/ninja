@@ -312,7 +312,7 @@ bool ManifestParser::ParseEdge(string* err) {
 
   Edge* edge = state_->AddEdge(rule);
   edge->env_ = env;
-
+#if 0
   string pool_name = edge->GetBinding("pool");
   if (!pool_name.empty()) {
     Pool* pool = state_->LookupPool(pool_name);
@@ -320,7 +320,7 @@ bool ManifestParser::ParseEdge(string* err) {
       return lexer_.Error("unknown pool name '" + pool_name + "'", err);
     edge->pool_ = pool;
   }
-
+#endif
   edge->outputs_.reserve(outs.size());
   for (size_t i = 0, e = outs.size(); i != e; ++i) {
     string path = outs[i].Evaluate(env);
@@ -365,7 +365,7 @@ bool ManifestParser::ParseEdge(string* err) {
   }
   edge->implicit_deps_ = implicit;
   edge->order_only_deps_ = order_only;
-
+#if 0
   if (options_.phony_cycle_action_ == kPhonyCycleActionWarn &&
       edge->maybe_phonycycle_diagnostic()) {
     // CMake 2.8.12.x and 3.0.x incorrectly write phony build statements
@@ -384,7 +384,7 @@ bool ManifestParser::ParseEdge(string* err) {
       }
     }
   }
-#if 0
+
   // Multiple outputs aren't (yet?) supported with depslog.
   string deps_type = edge->GetBinding("deps");
   if (!deps_type.empty() && edge->outputs_.size() > 1) {

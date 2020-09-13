@@ -119,9 +119,9 @@ struct NinjaMain : public BuildLogUser {
   int ToolQuery(const Options* options, int argc, char* argv[]);
 #if 0  
   int ToolDeps(const Options* options, int argc, char* argv[]);
-#endif  
   int ToolBrowse(const Options* options, int argc, char* argv[]);
   int ToolMSVC(const Options* options, int argc, char* argv[]);
+#endif  
   int ToolTargets(const Options* options, int argc, char* argv[]);
   int ToolCommands(const Options* options, int argc, char* argv[]);
   int ToolClean(const Options* options, int argc, char* argv[]);
@@ -402,7 +402,7 @@ int NinjaMain::ToolBrowse(const Options* options, int argc, char* argv[]) {
   // If we get here, the browse failed.
   return 1;
 }
-#else
+#elif 0
 int NinjaMain::ToolBrowse(const Options*, int, char**) {
   Fatal("browse tool not supported on this platform");
   return 1;
@@ -880,8 +880,10 @@ int NinjaMain::ToolUrtle(const Options* options, int argc, char** argv) {
 /// Returns a Tool, or NULL if Ninja should exit.
 const Tool* ChooseTool(const string& tool_name) {
   static const Tool kTools[] = {
+#if 0    
     { "browse", "browse dependency graph in a web browser",
       Tool::RUN_AFTER_LOAD, &NinjaMain::ToolBrowse },
+#endif      
 #if defined(_MSC_VER)
     { "msvc", "build helper for MSVC cl.exe (EXPERIMENTAL)",
       Tool::RUN_AFTER_FLAGS, &NinjaMain::ToolMSVC },
@@ -893,9 +895,9 @@ const Tool* ChooseTool(const string& tool_name) {
 #if 0      
     { "deps", "show dependencies stored in the deps log",
       Tool::RUN_AFTER_LOGS, &NinjaMain::ToolDeps },
-#endif
     { "graph", "output graphviz dot file for targets",
       Tool::RUN_AFTER_LOAD, &NinjaMain::ToolGraph },
+#endif      
     { "query", "show inputs/outputs for a path",
       Tool::RUN_AFTER_LOGS, &NinjaMain::ToolQuery },
     { "targets",  "list targets by their rule or depth in the DAG",
