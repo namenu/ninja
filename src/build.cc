@@ -310,8 +310,10 @@ void BuildStatus::PrintStatus(Edge* edge, EdgeStatus status) {
     return;
 
   bool force_full_command = config_.verbosity == BuildConfig::VERBOSE;
-
-  string to_print = edge->GetBinding("description");
+  char buf[40];  
+  snprintf(buf,sizeof(buf),"bsb: [%d/%d] ",finished_edges_,total_edges_);
+  string to_print = buf + edge->outputs_[0]->path();
+  
 #if 0  
   if (to_print.empty() || force_full_command)
     to_print = edge->GetBinding("command");
