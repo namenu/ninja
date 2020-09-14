@@ -122,7 +122,7 @@ void BuildStatus::BuildEdgeFinished(Edge* edge,
                                     const string& output,
                                     int* start_time,
                                     int* end_time,
-                                    vector<string> & compiler_log 
+                                    FILE* compiler_log 
                                     ) {
   int64_t now = GetTimeMillis();
 
@@ -191,7 +191,8 @@ void BuildStatus::BuildEdgeFinished(Edge* edge,
 #ifdef _WIN32
     _setmode(_fileno(stdout), _O_TEXT);  // End Windows extra CR fix
 #endif
-    compiler_log.push_back(stripped);
+    fputs(stripped.c_str(),compiler_log);
+    fflush(compiler_log);
   }
 }
 
@@ -756,6 +757,9 @@ Builder::Builder(State* state, const BuildConfig& config,
       scan_(state, build_log, deps_log, disk_interface,
             &config_.depfile_parser_options) {
   status_ = new BuildStatus(config);
+  compiler_log_ = fopen(".compiler.log","w");
+  setvbuf(compiler_log_,NULL,_IOLBF,BUFSIZ);
+  SetCloseOnExec(fileno(compiler_log_));
 }
 
 Builder::~Builder() {
@@ -790,15 +794,9 @@ void Builder::Cleanup() {
         disk_interface_->RemoveFile(depfile);
     }
   }
-  
-  FILE* buf = fopen(".compiler.log","w");
-  setvbuf(buf,NULL,_IOLBF,BUFSIZ);
-  SetCloseOnExec(fileno(buf));
-  for(vector<string>::iterator i = compiler_log_.begin(); i != compiler_log_.end();++i){
-    fputs(i->c_str(),buf);
-  }
-  fclose(buf);
-  buf = NULL;   
+
+  fclose(compiler_log_);
+  compiler_log_ = NULL;   
 }
 
 Node* Builder::AddTarget(const string& name, string* err) {
