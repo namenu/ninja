@@ -794,7 +794,7 @@ void Builder::Cleanup() {
         disk_interface_->RemoveFile(depfile);
     }
   }
-
+  fputs("# Done",compiler_log_);
   fclose(compiler_log_);
   compiler_log_ = NULL;   
 }
