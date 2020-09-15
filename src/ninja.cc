@@ -251,7 +251,7 @@ bool NinjaMain::RebuildManifest(const char* input_file, string* err) {
   if (!node)
     return false;
 
-  Builder builder(&state_, config_, &build_log_, &deps_log_, &disk_interface_);
+  Builder builder(&state_, config_, &build_log_, &deps_log_, &disk_interface_, NULL);
   if (!builder.AddTarget(node, err))
     return false;
 
@@ -1131,7 +1131,11 @@ int NinjaMain::RunBuild(int argc, char** argv) {
 
   disk_interface_.AllowStatCache(g_experimental_statcache);
 
-  Builder builder(&state_, config_, &build_log_, &deps_log_, &disk_interface_);
+  FILE* compiler_log_ = fopen(".compiler.log","w");
+  setvbuf(compiler_log_,NULL,_IOLBF,BUFSIZ);
+  SetCloseOnExec(fileno(compiler_log_));
+  Builder builder(&state_, config_, &build_log_, &deps_log_, &disk_interface_,compiler_log_);
+  
   for (size_t i = 0; i < targets.size(); ++i) {
     if (!builder.AddTarget(targets[i], &err)) {
       if (!err.empty()) {
@@ -1363,7 +1367,7 @@ NORETURN void real_main(int argc, char** argv) {
     ninja.ToolCleanDead(&options,argc,argv);
     
     // Attempt to rebuild the manifest before building anything else
-    if (ninja.RebuildManifest(options.input_file, &err)) {
+    if (false && ninja.RebuildManifest(options.input_file, &err)) {
       // In dry_run mode the regeneration will succeed without changing the
       // manifest forever. Better to return immediately.
       if (config.dry_run)

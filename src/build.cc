@@ -191,8 +191,10 @@ void BuildStatus::BuildEdgeFinished(Edge* edge,
 #ifdef _WIN32
     _setmode(_fileno(stdout), _O_TEXT);  // End Windows extra CR fix
 #endif
-    fputs(stripped.c_str(),compiler_log);
-    fflush(compiler_log);
+    if (compiler_log) {
+      fputs(stripped.c_str(), compiler_log);
+      fflush(compiler_log);
+    }
   }
 }
 
@@ -751,15 +753,14 @@ bool RealCommandRunner::WaitForCommand(Result* result) {
 
 Builder::Builder(State* state, const BuildConfig& config,
                  BuildLog* build_log, DepsLog* deps_log,
-                 DiskInterface* disk_interface)
+                 DiskInterface* disk_interface,
+                 FILE* compiler_log)
     : state_(state), config_(config),
+      compiler_log_(compiler_log),
       plan_(this), disk_interface_(disk_interface),
       scan_(state, build_log, deps_log, disk_interface,
             &config_.depfile_parser_options) {
-  status_ = new BuildStatus(config);
-  compiler_log_ = fopen(".compiler.log","w");
-  setvbuf(compiler_log_,NULL,_IOLBF,BUFSIZ);
-  SetCloseOnExec(fileno(compiler_log_));
+  status_ = new BuildStatus(config);  
 }
 
 Builder::~Builder() {
@@ -794,9 +795,12 @@ void Builder::Cleanup() {
         disk_interface_->RemoveFile(depfile);
     }
   }
-  fputs("# Done",compiler_log_);
-  fclose(compiler_log_);
-  compiler_log_ = NULL;   
+
+  if (compiler_log_) {
+    fputs("# Done", compiler_log_);
+    fclose(compiler_log_);
+    compiler_log_ = NULL;
+  }
 }
 
 Node* Builder::AddTarget(const string& name, string* err) {
