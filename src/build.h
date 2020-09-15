@@ -180,7 +180,7 @@ struct BuildConfig {
 struct Builder {
   Builder(State* state, const BuildConfig& config,
           BuildLog* build_log, DepsLog* deps_log,
-          DiskInterface* disk_interface);
+          DiskInterface* disk_interface, FILE* compiler_log);
   ~Builder();
 
   /// Clean up after interrupted commands by deleting output files.
@@ -214,8 +214,8 @@ struct Builder {
   bool LoadDyndeps(Node* node, string* err);
 
   State* state_;
-  FILE* compiler_log_;
   const BuildConfig& config_;
+  FILE* compiler_log_;
   Plan plan_;
 #if __cplusplus < 201703L
   auto_ptr<CommandRunner> command_runner_;
