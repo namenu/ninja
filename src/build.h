@@ -22,7 +22,7 @@
 #include <set>
 #include <string>
 #include <vector>
-
+#include <limits.h>
 #include "depfile_parser.h"
 #include "graph.h"  // XXX needed for DependencyScan; should rearrange.
 #include "exit_status.h"
