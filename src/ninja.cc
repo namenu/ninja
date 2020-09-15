@@ -142,12 +142,12 @@ struct NinjaMain : public BuildLogUser {
   /// Ensure the build directory exists, creating it if necessary.
   /// @return false on error.
   bool EnsureBuildDirExists();
-
+#if 0
   /// Rebuild the manifest, if necessary.
   /// Fills in \a err on error.
   /// @return true if the manifest was rebuilt.
   bool RebuildManifest(const char* input_file, string* err);
-
+#endif
   /// Build the targets listed on the command line.
   /// @return an exit code.
   int RunBuild(int argc, char** argv);
@@ -239,7 +239,7 @@ int GuessParallelism() {
     return processors + 2;
   }
 }
-
+#if 0
 /// Rebuild the build manifest, if necessary.
 /// Returns true if the manifest was rebuilt.
 bool NinjaMain::RebuildManifest(const char* input_file, string* err) {
@@ -272,7 +272,7 @@ bool NinjaMain::RebuildManifest(const char* input_file, string* err) {
 
   return true;
 }
-
+#endif
 Node* NinjaMain::CollectTarget(const char* cpath, string* err) {
   string path = cpath;
   uint64_t slash_bits;
@@ -1366,8 +1366,9 @@ NORETURN void real_main(int argc, char** argv) {
     //TODO: make it configurable    
     ninja.ToolCleanDead(&options,argc,argv);
     
+#if 0    
     // Attempt to rebuild the manifest before building anything else
-    if (false && ninja.RebuildManifest(options.input_file, &err)) {
+    if (ninja.RebuildManifest(options.input_file, &err)) {
       // In dry_run mode the regeneration will succeed without changing the
       // manifest forever. Better to return immediately.
       if (config.dry_run)
@@ -1378,7 +1379,7 @@ NORETURN void real_main(int argc, char** argv) {
       Error("rebuilding '%s': %s", options.input_file, err.c_str());
       exit(1);
     }
-
+#endif
     int result = ninja.RunBuild(argc, argv);
     if (g_metrics)
       ninja.DumpMetrics();
