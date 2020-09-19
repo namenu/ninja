@@ -1130,14 +1130,17 @@ int NinjaMain::RunBuild(int argc, char** argv) {
   }
 
   disk_interface_.AllowStatCache(g_experimental_statcache);
-
-  string compiler_log_path = ".compiler.log";
-  if(!build_dir_.empty()){
-    compiler_log_path = build_dir_ + "/" + compiler_log_path;
+  FILE* compiler_log_ = NULL;
+  if (!config_.dry_run) {
+    string compiler_log_path = ".compiler.log";
+    if (!build_dir_.empty()) {
+      compiler_log_path = build_dir_ + "/" + compiler_log_path;
+    }
+    compiler_log_ = fopen(compiler_log_path.c_str(), "w");
+    fprintf(compiler_log_,"#Start(%lld)\n", GetTimeMillis());
+    setvbuf(compiler_log_, NULL, _IOLBF, BUFSIZ);
+    SetCloseOnExec(fileno(compiler_log_));
   }
-  FILE* compiler_log_ = fopen(compiler_log_path.c_str(),"w");
-  setvbuf(compiler_log_,NULL,_IOLBF,BUFSIZ);
-  SetCloseOnExec(fileno(compiler_log_));
   Builder builder(&state_, config_, &build_log_, &deps_log_, &disk_interface_,compiler_log_);
   
   for (size_t i = 0; i < targets.size(); ++i) {
