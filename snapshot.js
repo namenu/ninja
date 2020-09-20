@@ -7,6 +7,9 @@ if (process.argv.includes("-build")) {
     // running on visual studio command line
     child.execSync(command);
   } else {
+    if(process.platform === 'darwin'){
+      process.env['CXXFLAGS']='-flto'
+    }    
     child.execSync(command, { stdio: [0, 1, 2] });
     child.execSync(`strip ninja`, { stdio: [0, 1, 2] });
   }
