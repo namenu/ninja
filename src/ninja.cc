@@ -1137,7 +1137,7 @@ int NinjaMain::RunBuild(int argc, char** argv) {
       compiler_log_path = build_dir_ + "/" + compiler_log_path;
     }
     compiler_log_ = fopen(compiler_log_path.c_str(), "w");
-    fprintf(compiler_log_,"#Start(%lld)\n", GetTimeMillis());
+    fprintf(compiler_log_,"#Start(%" PRId64 ")\n", GetTimeMillis());
     setvbuf(compiler_log_, NULL, _IOLBF, BUFSIZ);
     SetCloseOnExec(fileno(compiler_log_));
   }
