@@ -797,7 +797,7 @@ void Builder::Cleanup() {
   }
 
   if (compiler_log_) {
-    fprintf(compiler_log_, "#Done(%lld)\n", GetTimeMillis());
+    fprintf(compiler_log_, "#Done(%" PRId64 ")\n", GetTimeMillis());
     fclose(compiler_log_);
     compiler_log_ = NULL;
   }
