@@ -409,7 +409,7 @@ int NinjaMain::ToolBrowse(const Options*, int, char**) {
 }
 #endif
 
-#if defined(_MSC_VER)
+#if 0
 int NinjaMain::ToolMSVC(const Options* options, int argc, char* argv[]) {
   // Reset getopt: push one argument onto the front of argv, reset optind.
   argc++;
@@ -883,8 +883,6 @@ const Tool* ChooseTool(const string& tool_name) {
 #if 0    
     { "browse", "browse dependency graph in a web browser",
       Tool::RUN_AFTER_LOAD, &NinjaMain::ToolBrowse },
-#endif      
-#if defined(_MSC_VER)
     { "msvc", "build helper for MSVC cl.exe (EXPERIMENTAL)",
       Tool::RUN_AFTER_FLAGS, &NinjaMain::ToolMSVC },
 #endif
