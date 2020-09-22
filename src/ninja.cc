@@ -29,7 +29,9 @@
 #include <getopt.h>
 #include <unistd.h>
 #endif
-
+#ifndef _WIN32
+#include <fcntl.h>
+#endif
 #include "browse.h"
 #include "build.h"
 #include "build_log.h"
@@ -1129,11 +1131,26 @@ int NinjaMain::RunBuild(int argc, char** argv) {
 
   disk_interface_.AllowStatCache(g_experimental_statcache);
   FILE* compiler_log_ = NULL;
+
+  string lockfile = "bsb.lock";  
   if (!config_.dry_run) {
     string compiler_log_path = ".compiler.log";
     if (!build_dir_.empty()) {
       compiler_log_path = build_dir_ + "/" + compiler_log_path;
+      lockfile = build_dir_ + "/" + lockfile;
     }
+#ifdef F_SETLK    
+    int fd = open(lockfile.c_str(), O_RDWR | O_CREAT, 0600);
+    struct flock fl;
+    fl.l_start = 0;
+    fl.l_len = 0;
+    fl.l_type = F_WRLCK;
+    fl.l_whence = SEEK_SET;
+    if(fcntl(fd, F_SETLK, &fl) < 0){
+      fprintf(stderr,"Another instance of this program is running\n");  
+      return 3;
+    }    
+#endif    
     compiler_log_ = fopen(compiler_log_path.c_str(), "w");
     fprintf(compiler_log_,"#Start(%" PRId64 ")\n", GetTimeMillis());
     setvbuf(compiler_log_, NULL, _IOLBF, BUFSIZ);
@@ -1324,11 +1341,13 @@ NORETURN void real_main(int argc, char** argv) {
     // Don't print this if a tool is being used, so that tool output
     // can be piped into a file without this string showing up.
     if (!options.tool && config.verbosity == BuildConfig::VERBOSE)
-      printf("ninja: Entering directory `%s'\n", options.working_dir);
+      printf("bsb: Entering directory `%s'\n", options.working_dir);
     if (chdir(options.working_dir) < 0) {
       Fatal("chdir to '%s' - %s", options.working_dir, strerror(errno));
     }
   }
+
+
 #if 0
   if (options.tool && options.tool->when == Tool::RUN_AFTER_FLAGS) {
     // None of the RUN_AFTER_FLAGS actually use a NinjaMain, but it's needed
