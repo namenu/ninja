@@ -41,7 +41,17 @@ struct StringPiece {
   bool operator!=(const StringPiece& other) const {
     return !(*this == other);
   }
+  bool IsSuffix(const string& other) const{
+    size_t other_len_ = other.length();
+    return other_len_ >= len_ &&
+      memcmp(str_, other.c_str() + other_len_ - len_ ,  len_) == 0;
+  }
 
+  bool IsSuffix(const StringPiece& other) const {
+    size_t other_len_ = other.len_;    
+    return other_len_ >= len_ &&
+           memcmp(str_, other.str_ + other_len_ - len_, len_) == 0;
+  }
   /// Convert the slice into a full-fledged std::string, copying the
   /// data into a new string.
   string AsString() const {
@@ -58,6 +68,19 @@ struct StringPiece {
 
   char operator[](size_t pos) const {
     return str_[pos];
+  }
+
+  static const StringPiece& getJsSuffix(){
+    static const StringPiece js(".js", sizeof(".js") - 1 );
+    return js;
+  }
+  static const StringPiece& getMjsSuffix() {
+    static const StringPiece js(".mjs", sizeof(".mjs") - 1);
+    return js;
+  }
+  static const StringPiece& getCjsSuffix() {
+    static const StringPiece js(".cjs", sizeof(".cjs") - 1);
+    return js;
   }
 
   size_t size() const {
