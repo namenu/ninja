@@ -127,20 +127,19 @@ int Cleaner::CleanAll(bool generator) {
 void Cleaner::CleanDead(const BuildLog::Entries& entries) {
   // Reset();
   set<string> staleFiles ;
+
   for (BuildLog::Entries::const_iterator i = entries.begin();
        i != entries.end(); ++i) {
     Node* n = state_->LookupNode(i->first);
     if (!n || !n->in_edge()) {
       string toDelete = i->first.AsString();
-      string::size_type extension_index = toDelete.rfind('.', toDelete.length());
-      if (extension_index != string::npos) {
-        string ext = toDelete.substr(extension_index);
-        if (ext == ".js" || ext == ".mjs" || ext == ".cjs") {
-          int ret = RemoveFile(toDelete);
+      if(StringPiece::getJsSuffix().IsSuffix(toDelete) ||
+         StringPiece::getMjsSuffix().IsSuffix(toDelete) || 
+         StringPiece::getCjsSuffix().IsSuffix(toDelete)){
+        int ret = RemoveFile(toDelete);
           if(ret == 0){
             staleFiles.insert(toDelete);
           }
-        }
       }
     }
   }
