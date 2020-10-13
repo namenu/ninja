@@ -446,11 +446,11 @@ string EdgeEnv::MakePath(const Node* node, FileType filetype){
   if(escape_in_out_ == kShellEscape){
       string result;
 #if _WIN32
-      GetWin32EscapedString(path, &result);
+      GetWin32EscapedString(transform(path,filetype), &result);
 #else
-      GetShellEscapedString(path, &result);
+      GetShellEscapedString(transform(path,filetype), &result);
 #endif
-      return transform(result,filetype);
+      return result;
   } else {
     return transform(path,filetype);
   }
