@@ -360,6 +360,9 @@ string EdgeEnv::LookupVariable(const string& var) {
     return MakePathList(edge_->inputs_.begin(),
                         edge_->inputs_.begin() + explicit_deps_count, ' ');
   }
+  if (var == "out_last") {
+    return MakePath(edge_->outputs_.back(), (FileType)-1);
+  }
   if (var == "out") {
     int explicit_outs_count = edge_->outputs_.size() - edge_->implicit_outs_;
     return MakePathList(edge_->outputs_.begin(),
@@ -433,7 +436,7 @@ string transform(const string& path, FileType filetype){
      }
      return path.substr(0,pos);
   }
-  return string(); // fix warning-error
+  return path; // fix warning-error
   // This could be wrong in extreme cases
   // long_path/../../'hell\ escaped_file'
   // It happens rarely in bsb since module name
