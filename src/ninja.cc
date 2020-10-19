@@ -427,7 +427,8 @@ int ToolTargetsList(const vector<Node*>& nodes, int depth, int indent) {
       printf("  ");
     const char* target = (*n)->path().c_str();
     if ((*n)->in_edge()) {
-      printf("%s: %s\n", target, (*n)->in_edge()->rule_->name().c_str());
+      // printf("%s: %s\n", target, (*n)->in_edge()->rule_->name().c_str());
+      printf("%s\n", target);
       if (depth > 1 || depth <= 0)
         ToolTargetsList((*n)->in_edge()->inputs_, depth - 1, indent + 1);
     } else {
@@ -477,9 +478,10 @@ int ToolTargetsList(State* state) {
        e != state->edges_.end(); ++e) {
     for (vector<Node*>::iterator out_node = (*e)->outputs_.begin();
          out_node != (*e)->outputs_.end(); ++out_node) {
-      printf("%s: %s\n",
-             (*out_node)->path().c_str(),
-             (*e)->rule_->name().c_str());
+      // printf("%s: %s\n",
+      //        (*out_node)->path().c_str(),
+      //        (*e)->rule_->name().c_str());
+        printf("%s\n", (*out_node)->path().c_str());
     }
   }
   return 0;
