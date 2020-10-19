@@ -637,7 +637,7 @@ int NinjaMain::ToolCommands(const Options* options, int argc, char* argv[]) {
   ++argc;
   --argv;
 
-  PrintCommandMode mode = PCM_Single;
+  PrintCommandMode mode = PCM_All;
 
   optind = 1;
   int opt;
