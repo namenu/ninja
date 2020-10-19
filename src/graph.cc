@@ -382,16 +382,16 @@ string EdgeEnv::LookupVariable(const string& var) {
                         ' ');
   }
 #endif
-  if (recursive_) {
-    vector<string>::const_iterator it;
-    if ((it = find(lookups_.begin(), lookups_.end(), var)) != lookups_.end()) {
-      string cycle;
-      for (; it != lookups_.end(); ++it)
-        cycle.append(*it + " -> ");
-      cycle.append(var);
-      Fatal(("cycle in rule variables: " + cycle).c_str());
-    }
-  }
+  // if (recursive_) {
+  //   vector<string>::const_iterator it;
+  //   if ((it = find(lookups_.begin(), lookups_.end(), var)) != lookups_.end()) {
+  //     string cycle;
+  //     for (; it != lookups_.end(); ++it)
+  //       cycle.append(*it + " -> ");
+  //     cycle.append(var);
+  //     Fatal(("cycle in rule variables: " + cycle).c_str());
+  //   }
+  // }
 
   // See notes on BindingEnv::LookupWithFallback.
   const EvalString* eval = edge_->rule_->GetBinding(var);
@@ -400,7 +400,7 @@ string EdgeEnv::LookupVariable(const string& var) {
 
   // In practice, variables defined on rules never use another rule variable.
   // For performance, only start checking for cycles after the first lookup.
-  recursive_ = true;
+  // recursive_ = true;
   return edge_->env_->LookupWithFallback(var, eval, this);
 }
 
