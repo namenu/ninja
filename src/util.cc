@@ -139,9 +139,9 @@ void Warning(const char* msg, ...) {
 void Error(const char* msg, ...) {
   va_list ap;
   if (GetAnsiType()){
-    fprintf(stderr, "\x1b[31m" "ninja: error: " "\x1b[0m");
+    fprintf(stderr, "\x1b[31m" "bsb: error: " "\x1b[0m");
   } else {
-    fprintf(stderr, "ninja: error: ");
+    fprintf(stderr, "bsb: error: ");
   }
   va_start(ap, msg);
   vfprintf(stderr, msg, ap);
