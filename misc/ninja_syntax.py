@@ -79,7 +79,7 @@ class Writer(object):
             out_outputs.append('|')
             out_outputs.extend(implicit_outputs)
 
-        self._line('build %s: %s' % (' '.join(out_outputs),
+        self._line('o %s: %s' % (' '.join(out_outputs),
                                      ' '.join([rule] + all_inputs)))
         if pool is not None:
             self._line('  pool = %s' % pool)
