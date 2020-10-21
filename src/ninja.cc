@@ -417,7 +417,7 @@ int NinjaMain::ToolMSVC(const Options* options, int argc, char* argv[]) {
   optind = 0;
   return MSVCHelperMain(argc, argv);
 }
-#endif
+
 
 int ToolTargetsList(const vector<Node*>& nodes, int depth, int indent) {
   for (vector<Node*>::const_iterator n = nodes.begin();
@@ -472,7 +472,7 @@ int ToolTargetsList(State* state, const string& rule_name) {
 
   return 0;
 }
-
+#endif
 int ToolTargetsList(State* state) {
   for (vector<Edge*>::iterator e = state->edges_.begin();
        e != state->edges_.end(); ++e) {
@@ -528,6 +528,8 @@ int NinjaMain::ToolDeps(const Options* options, int argc, char** argv) {
 }
 #endif
 int NinjaMain::ToolTargets(const Options* options, int argc, char* argv[]) {
+  return ToolTargetsList(&state_);    
+/*  
   int depth = 1;
   if (argc >= 1) {
     string mode = argv[0];
@@ -565,6 +567,7 @@ int NinjaMain::ToolTargets(const Options* options, int argc, char* argv[]) {
     Error("%s", err.c_str());
     return 1;
   }
+*/  
 }
 
 int NinjaMain::ToolRules(const Options* options, int argc, char* argv[]) {
