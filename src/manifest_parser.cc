@@ -37,10 +37,12 @@ bool ManifestParser::Parse(const string& filename, const string& input,
   for (;;) {
     Lexer::Token token = lexer_.ReadToken();
     switch (token) {
+/*      
     case Lexer::POOL:
       if (!ParsePool(err))
         return false;
       break;
+*/      
     case Lexer::BUILD:
       if (!ParseEdge(err))
         return false;
