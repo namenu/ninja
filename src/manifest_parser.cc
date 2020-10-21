@@ -329,6 +329,11 @@ bool ManifestParser::ParseEdge(string* err) {
     if (!CanonicalizePath(&path, &slash_bits, &path_err))
       return lexer_.Error(path_err, err);
     if (!state_->AddOut(edge, path, slash_bits)) {
+#if 1 
+        lexer_.Error("multiple rules generate " + path + " [-w dupbuild=err]",
+                     err);
+        return false;
+#else        
       if (options_.dupe_edge_action_ == kDupeEdgeActionError) {
         lexer_.Error("multiple rules generate " + path + " [-w dupbuild=err]",
                      err);
@@ -343,8 +348,10 @@ bool ManifestParser::ParseEdge(string* err) {
         if (e - i <= static_cast<size_t>(implicit_outs))
           --implicit_outs;
       }
+#endif      
     }
   }
+#if 0  
   if (edge->outputs_.empty()) {
     // All outputs of the edge are already created by other edges. Don't add
     // this edge.  Do this check before input nodes are connected to the edge.
@@ -352,6 +359,7 @@ bool ManifestParser::ParseEdge(string* err) {
     delete edge;
     return true;
   }
+#endif  
   edge->implicit_outs_ = implicit_outs;
 
   edge->inputs_.reserve(ins.size());
@@ -403,11 +411,13 @@ bool ManifestParser::ParseEdge(string* err) {
       return false;
     edge->dyndep_ = state_->GetNode(dyndep, slash_bits);
     edge->dyndep_->set_dyndep_pending(true);
+#if 0    
     vector<Node*>::iterator dgi =
       std::find(edge->inputs_.begin(), edge->inputs_.end(), edge->dyndep_);
     if (dgi == edge->inputs_.end()) {
       return lexer_.Error("dyndep '" + dyndep + "' is not an input", err);
     }
+#endif    
   }
 
   return true;
