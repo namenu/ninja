@@ -22,6 +22,7 @@
 #include "state.h"
 #include "util.h"
 #include "version.h"
+#include "metrics.h"
 
 ManifestParser::ManifestParser(State* state, FileReader* file_reader,
                                ManifestParserOptions options)
@@ -32,6 +33,7 @@ ManifestParser::ManifestParser(State* state, FileReader* file_reader,
 
 bool ManifestParser::Parse(const string& filename, const string& input,
                            string* err) {
+  METRIC_RECORD("parse build.ninja");                             
   lexer_.Start(filename, input);
 
   for (;;) {
@@ -209,6 +211,7 @@ bool ManifestParser::ParseDefault(string* err) {
 }
 
 bool ManifestParser::ParseEdge(string* err) {
+  METRIC_RECORD("parse Edge");
   vector<EvalString> ins, outs;
 
   {
