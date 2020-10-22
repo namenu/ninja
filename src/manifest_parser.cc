@@ -339,20 +339,6 @@ bool ManifestParser::ParseEdge(string* err) {
                      err);
         return false;
 #else        
-      if (options_.dupe_edge_action_ == kDupeEdgeActionError) {
-        lexer_.Error("multiple rules generate " + path + " [-w dupbuild=err]",
-                     err);
-        return false;
-      } else {
-        if (!quiet_) {
-          Warning("multiple rules generate %s. "
-                  "builds involving this target will not be correct; "
-                  "continuing anyway [-w dupbuild=warn]",
-                  path.c_str());
-        }
-        if (e - i <= static_cast<size_t>(implicit_outs))
-          --implicit_outs;
-      }
 #endif      
     }
   }
