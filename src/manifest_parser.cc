@@ -353,15 +353,7 @@ bool ManifestParser::ParseEdge(string* err) {
 #endif      
     }
   }
-#if 0  
-  if (edge->outputs_.empty()) {
-    // All outputs of the edge are already created by other edges. Don't add
-    // this edge.  Do this check before input nodes are connected to the edge.
-    state_->edges_.pop_back();
-    delete edge;
-    return true;
-  }
-#endif  
+
   edge->implicit_outs_ = implicit_outs;
 
   edge->inputs_.reserve(ins.size());
@@ -375,34 +367,7 @@ bool ManifestParser::ParseEdge(string* err) {
   }
   edge->implicit_deps_ = implicit;
   edge->order_only_deps_ = order_only;
-#if 0
-  if (options_.phony_cycle_action_ == kPhonyCycleActionWarn &&
-      edge->maybe_phonycycle_diagnostic()) {
-    // CMake 2.8.12.x and 3.0.x incorrectly write phony build statements
-    // that reference themselves.  Ninja used to tolerate these in the
-    // build graph but that has since been fixed.  Filter them out to
-    // support users of those old CMake versions.
-    Node* out = edge->outputs_[0];
-    vector<Node*>::iterator new_end =
-        remove(edge->inputs_.begin(), edge->inputs_.end(), out);
-    if (new_end != edge->inputs_.end()) {
-      edge->inputs_.erase(new_end, edge->inputs_.end());
-      if (!quiet_) {
-        Warning("phony target '%s' names itself as an input; "
-                "ignoring [-w phonycycle=warn]",
-                out->path().c_str());
-      }
-    }
-  }
 
-  // Multiple outputs aren't (yet?) supported with depslog.
-  string deps_type = edge->GetBinding("deps");
-  if (!deps_type.empty() && edge->outputs_.size() > 1) {
-    return lexer_.Error("multiple outputs aren't (yet?) supported by depslog; "
-                        "bring this up on the mailing list if it affects you",
-                        err);
-  }
-#endif
   // Lookup, validate, and save any dyndep binding.  It will be used later
   // to load generated dependency information dynamically, but it must
   // be one of our manifest-specified inputs.
@@ -413,13 +378,6 @@ bool ManifestParser::ParseEdge(string* err) {
       return false;
     edge->dyndep_ = state_->GetNode(dyndep, slash_bits);
     edge->dyndep_->set_dyndep_pending(true);
-#if 0    
-    vector<Node*>::iterator dgi =
-      std::find(edge->inputs_.begin(), edge->inputs_.end(), edge->dyndep_);
-    if (dgi == edge->inputs_.end()) {
-      return lexer_.Error("dyndep '" + dyndep + "' is not an input", err);
-    }
-#endif    
   }
 
   return true;
