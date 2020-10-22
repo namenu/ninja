@@ -350,7 +350,7 @@ int NinjaMain::ToolGraph(const Options* options, int argc, char* argv[]) {
 
   return 0;
 }
-
+#if 0
 int NinjaMain::ToolQuery(const Options* options, int argc, char* argv[]) {
   if (argc == 0) {
     Error("expected a target to query");
@@ -395,7 +395,7 @@ int NinjaMain::ToolQuery(const Options* options, int argc, char* argv[]) {
   }
   return 0;
 }
-
+#endif
 #if defined(NINJA_HAVE_BROWSE)
 int NinjaMain::ToolBrowse(const Options* options, int argc, char* argv[]) {
   RunBrowsePython(&state_, ninja_command_, options->input_file, argc, argv);
@@ -900,9 +900,10 @@ const Tool* ChooseTool(const string& tool_name) {
       Tool::RUN_AFTER_LOGS, &NinjaMain::ToolDeps },
     { "graph", "output graphviz dot file for targets",
       Tool::RUN_AFTER_LOAD, &NinjaMain::ToolGraph },
-#endif      
+
     { "query", "show inputs/outputs for a path",
       Tool::RUN_AFTER_LOGS, &NinjaMain::ToolQuery },
+#endif      
     { "targets",  "list targets by their rule or depth in the DAG",
       Tool::RUN_AFTER_LOAD, &NinjaMain::ToolTargets },
     { "compdb",  "dump JSON compilation database to stdout",
