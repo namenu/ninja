@@ -347,7 +347,13 @@ struct EdgeEnv : public Env {
 
 string EdgeEnv::LookupVariable(const string& var) {
   
-#if 1
+
+  if( var == "i") {
+    return MakePath(edge_->inputs_.front(),(FileType) -1);
+  }
+  if (var == "out") {
+    return MakePath(edge_->outputs_.front(), (FileType)-1);
+  }
   if (var == "in_e") {
     return MakePath(*(edge_->inputs_.begin()), REMOVE_EXT);
   }
@@ -363,25 +369,8 @@ string EdgeEnv::LookupVariable(const string& var) {
   if (var == "out_last") {
     return MakePath(edge_->outputs_.back(), (FileType)-1);
   }
-  if (var == "out") {
-    int explicit_outs_count = edge_->outputs_.size() - edge_->implicit_outs_;
-    return MakePathList(edge_->outputs_.begin(),
-                        edge_->outputs_.begin() + explicit_outs_count, ' ');
-  }
-#else
-  if (var == "in" || var == "in_newline") {
-    int explicit_deps_count = edge_->inputs_.size() - edge_->implicit_deps_ -
-      edge_->order_only_deps_;
-    return MakePathList(edge_->inputs_.begin(),
-                        edge_->inputs_.begin() + explicit_deps_count,
-                        var == "in" ? ' ' : '\n');
-  } else if (var == "out") {
-    int explicit_outs_count = edge_->outputs_.size() - edge_->implicit_outs_;
-    return MakePathList(edge_->outputs_.begin(),
-                        edge_->outputs_.begin() + explicit_outs_count,
-                        ' ');
-  }
-#endif
+
+
   // if (recursive_) {
   //   vector<string>::const_iterator it;
   //   if ((it = find(lookups_.begin(), lookups_.end(), var)) != lookups_.end()) {
