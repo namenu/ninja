@@ -695,7 +695,8 @@ if options.bootstrap:
         os.rename(final_exe, bootstrap_exe)
 
         rebuild_args.append(bootstrap_exe)
-
+    rebuild_args.append('-d')
+    rebuild_args.append('explain')
     if options.verbose:
         rebuild_args.append('-v')
 
