@@ -354,9 +354,6 @@ string EdgeEnv::LookupVariable(const string& var) {
   if (var == "out") {
     return MakePath(edge_->outputs_.front(), (FileType)-1);
   }
-  if (var == "in_e") {
-    return MakePath(*(edge_->inputs_.begin()), REMOVE_EXT);
-  }
   if (var == "in_d") {
     return MakePath(*(edge_->inputs_.begin()), REMOVE_BASENAME);
   }
