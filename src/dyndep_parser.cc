@@ -80,11 +80,9 @@ bool DyndepParser::ParseEdge(string* err) {
   if (!ExpectToken(Lexer::NEWLINE, err))
     return false;
   dyndeps->implicit_inputs_.reserve(ins.size());
+  string path_err;
   for (vector<string>::iterator i = ins.begin(); i != ins.end(); ++i) {
-
     string path = *i;
-   
-    string path_err;
     uint64_t slash_bits;
     if (!CanonicalizePath(&path, &slash_bits, &path_err))
       return lexer_.Error(path_err, err);
