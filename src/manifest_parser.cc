@@ -344,8 +344,17 @@ bool ManifestParser::ParseEdge(string* err) {
   }
 
   edge->implicit_outs_ = implicit_outs;
+  size_t inputs_reserve_size = ins.size();
+  string dyndep; 
+  bool hasDynDep = rule -> GetBinding("dyndep");
+  if (hasDynDep) {
+    order_only++;
+    inputs_reserve_size++;
+  }
 
-  edge->inputs_.reserve(ins.size());
+  edge->inputs_.reserve(inputs_reserve_size);
+  uint64_t dyndep_slash_bits;
+
   for (vector<EvalString>::iterator i = ins.begin(); i != ins.end(); ++i) {
     string path = i->Evaluate(env);
     string path_err;
@@ -353,6 +362,10 @@ bool ManifestParser::ParseEdge(string* err) {
     if (!CanonicalizePath(&path, &slash_bits, &path_err))
       return lexer_.Error(path_err, err);
     state_->AddIn(edge, path, slash_bits);
+    if(hasDynDep && i == ins.begin()){
+      dyndep = path.substr(0,path.find_last_of('.')) + ".d";
+      dyndep_slash_bits = slash_bits;
+    }
   }
   edge->implicit_deps_ = implicit;
   edge->order_only_deps_ = order_only;
@@ -360,13 +373,10 @@ bool ManifestParser::ParseEdge(string* err) {
   // Lookup, validate, and save any dyndep binding.  It will be used later
   // to load generated dependency information dynamically, but it must
   // be one of our manifest-specified inputs.
-  string dyndep = edge->GetUnescapedDyndep();
-  if (!dyndep.empty()) {
-    uint64_t slash_bits;
-    if (!CanonicalizePath(&dyndep, &slash_bits, err))
-      return false;
-    edge->dyndep_ = state_->GetNode(dyndep, slash_bits);
+  if (hasDynDep) {
+    edge->dyndep_ = state_->GetNode(dyndep, dyndep_slash_bits);
     edge->dyndep_->set_dyndep_pending(true);
+    state_->AddIn(edge, dyndep, dyndep_slash_bits);
   }
 
   return true;
