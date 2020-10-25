@@ -340,7 +340,7 @@ bool ManifestParser::ParseEdge(string* err) {
   }
 
   edge->inputs_.reserve(inputs_reserve_size);
-  uint64_t dyndep_slash_bits;
+  uint64_t dyndep_slash_bits = 0;
 
   for (vector<EvalString>::iterator i = ins.begin(); i != ins.end(); ++i) {
     string path = i->Evaluate(env);
