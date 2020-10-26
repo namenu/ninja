@@ -317,15 +317,6 @@ bool ManifestParser::ParseEdge(string* err) {
 
   Edge* edge = state_->AddEdge(rule);
   edge->env_ = env;
-#if 0
-  string pool_name = edge->GetBinding("pool");
-  if (!pool_name.empty()) {
-    Pool* pool = state_->LookupPool(pool_name);
-    if (pool == NULL)
-      return lexer_.Error("unknown pool name '" + pool_name + "'", err);
-    edge->pool_ = pool;
-  }
-#endif
   edge->outputs_.reserve(outs.size());
   for (size_t i = 0, e = outs.size(); i != e; ++i) {
     string path = outs[i].Evaluate(env);
@@ -334,12 +325,8 @@ bool ManifestParser::ParseEdge(string* err) {
     if (!CanonicalizePath(&path, &slash_bits, &path_err))
       return lexer_.Error(path_err, err);
     if (!state_->AddOut(edge, path, slash_bits)) {
-#if 1 
-        lexer_.Error("multiple rules generate " + path + " [-w dupbuild=err]",
-                     err);
-        return false;
-#else        
-#endif      
+        lexer_.Error("multiple rules generate " + path, err);
+        return false;    
     }
   }
 
