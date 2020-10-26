@@ -67,7 +67,7 @@ bool DyndepLoader::LoadDyndeps(Node* node, DyndepFile* ddf,
   }
 
   // Reject extra outputs in dyndep file.
-  for (DyndepFile::const_iterator oe = ddf->begin(); oe != ddf->end();
+  /* for (DyndepFile::const_iterator oe = ddf->begin(); oe != ddf->end();
        ++oe) {
     if (!oe->second.used_) {
       Edge* const edge = oe->first;
@@ -76,7 +76,7 @@ bool DyndepLoader::LoadDyndeps(Node* node, DyndepFile* ddf,
               "does not have a dyndep binding for the file");
       return false;
     }
-  }
+  } */
 
   return true;
 }
