@@ -198,7 +198,7 @@ void State::Dump() {
            node->path().c_str(),
            node->status_known() ? (node->dirty() ? "dirty" : "clean")
                                 : "unknown",
-           node->id());
+           0/*node->id()*/);
   }
   if (!pools_.empty()) {
     printf("resource_pools:\n");
