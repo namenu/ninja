@@ -57,9 +57,7 @@ bool DyndepLoader::LoadDyndeps(Node* node, DyndepFile* ddf,
               "'" + node->path() + "'");
       return false;
 #endif      
-    }
-
-    ddi->second.used_ = true;
+    }    
     Dyndeps const& dyndeps = ddi->second;
     if (!UpdateEdge(edge, &dyndeps, err)) {
       return false;
