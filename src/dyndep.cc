@@ -86,27 +86,6 @@ bool DyndepLoader::UpdateEdge(Edge* edge, Dyndeps const* dyndeps,
   // Add dyndep-discovered bindings to the edge.
   // We know the edge already has its own binding
   // scope because it has a "dyndep" binding.
-#if 0  
-  if (dyndeps->restat_)
-    edge->env_->AddBinding("restat", "1");
-
-  // Add the dyndep-discovered outputs to the edge.
-  edge->outputs_.insert(edge->outputs_.end(),
-                        dyndeps->implicit_outputs_.begin(),
-                        dyndeps->implicit_outputs_.end());
-  edge->implicit_outs_ += dyndeps->implicit_outputs_.size();
-
-  // Add this edge as incoming to each new output.
-  for (std::vector<Node*>::const_iterator i =
-           dyndeps->implicit_outputs_.begin();
-       i != dyndeps->implicit_outputs_.end(); ++i) {
-    if ((*i)->in_edge() != NULL) {
-      *err = "multiple rules generate " + (*i)->path();
-      return false;
-    }
-    (*i)->set_in_edge(edge);
-  }
-#endif
   // Add the dyndep-discovered inputs to the edge.
   edge->inputs_.insert(edge->inputs_.end() - edge->order_only_deps_,
                        dyndeps->implicit_inputs_.begin(),
