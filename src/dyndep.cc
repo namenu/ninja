@@ -40,41 +40,18 @@ bool DyndepLoader::LoadDyndeps(Node* node, DyndepFile* ddf,
     return false;
 
   // Update each edge that specified this node as its dyndep binding.
-  std::vector<Edge*> const& out_edges = node->out_edges();
-  for (std::vector<Edge*>::const_iterator oe = out_edges.begin();
-       oe != out_edges.end(); ++oe) {
-    Edge* const edge = *oe;
-    if (edge->dyndep_ != node)
-      continue;
-
-    DyndepFile::iterator ddi = ddf->find(edge);
-    if (ddi == ddf->end()) {
-#if 1       
-      continue;
-#else
-      *err = ("'" + edge->outputs_[0]->path() + "' "
-              "not mentioned in its dyndep file "
-              "'" + node->path() + "'");
-      return false;
-#endif      
-    }    
+  for (DyndepFile::const_iterator ddi = ddf->begin();
+       ddi != ddf->end(); ++ddi) {
     Dyndeps const& dyndeps = ddi->second;
-    if (!UpdateEdge(edge, &dyndeps, err)) {
+    if (!UpdateEdge(ddi->first, &dyndeps, err)) {
       return false;
     }
   }
+  // Some invariant provided by dep gen:
+  // - It has to be an input
+  // - It has to be marked as dyndep for each edge listed 
+  //   Reject extra outputs in dyndep file.
 
-  // Reject extra outputs in dyndep file.
-  /* for (DyndepFile::const_iterator oe = ddf->begin(); oe != ddf->end();
-       ++oe) {
-    if (!oe->second.used_) {
-      Edge* const edge = oe->first;
-      *err = ("dyndep file '" + node->path() + "' mentions output "
-              "'" + edge->outputs_[0]->path() + "' whose build statement "
-              "does not have a dyndep binding for the file");
-      return false;
-    }
-  } */
 
   return true;
 }
