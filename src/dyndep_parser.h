@@ -15,33 +15,22 @@
 #ifndef NINJA_DYNDEP_PARSER_H_
 #define NINJA_DYNDEP_PARSER_H_
 
-#include "eval_env.h"
+
 #include "parser.h"
 
 struct DyndepFile;
-struct EvalString;
+
 
 /// Parses dyndep files.
 struct DyndepParser: public Parser {
   DyndepParser(State* state, FileReader* file_reader,
                DyndepFile* dyndep_file);
-
-  /// Parse a text string of input.  Used by tests.
-  bool ParseTest(const string& input, string* err) {
-    return Parse("input", input, err);
-  }
-
 private:
   /// Parse a file, given its contents as a string.
   bool Parse(const string& filename, const string& input, string* err);
-#if 0
-  bool ParseDyndepVersion(string* err);
-  bool ParseLet(string* key, EvalString* val, string* err);
-#endif  
   bool ParseEdge(string* err);
-
   DyndepFile* dyndep_file_;
-  BindingEnv env_;
+
 };
 
 #endif  // NINJA_DYNDEP_PARSER_H_

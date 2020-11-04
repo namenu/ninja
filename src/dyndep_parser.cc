@@ -46,6 +46,7 @@ bool DyndepParser::ParseEdge(string* err) {
   // Parse one explicit output.  We expect it to already have an edge.
   // We will record its dynamically-discovered dependency information.
   Dyndeps* dyndeps = NULL;
+  Edge* edge = NULL;
   {
     string path;
     if(!lexer_.ReadSimplePath(&path)){
@@ -58,7 +59,7 @@ bool DyndepParser::ParseEdge(string* err) {
     Node* node = state_->LookupNode(path);
     if (!node || !node->in_edge())
       return lexer_.Error("no build statement exists for '" + path + "'", err);
-    Edge* edge = node->in_edge();
+    edge = node->in_edge();
     std::pair<DyndepFile::iterator, bool> res =
       dyndep_file_->insert(DyndepFile::value_type(edge, Dyndeps()));
     if (!res.second)
