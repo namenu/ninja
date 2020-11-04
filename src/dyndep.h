@@ -57,11 +57,11 @@ struct DyndepLoader {
   /// information loaded from the dyndep file.
   bool LoadDyndeps(Node* node, std::string* err) const;
   bool LoadDyndeps(Node* node, DyndepFile* ddf, std::string* err) const;
-
+  static bool UpdateEdge(Edge* edge, Dyndeps const* dyndeps, std::string* err);
  private:
   bool LoadDyndepFile(Node* file, DyndepFile* ddf, std::string* err) const;
 
-  bool UpdateEdge(Edge* edge, Dyndeps const* dyndeps, std::string* err) const;
+
 
   State* state_;
   DiskInterface* disk_interface_;
