@@ -37,8 +37,6 @@
 #include "clean.h"
 #include "debug_flags.h"
 #include "disk_interface.h"
-#include "graph.h"
-#include "graphviz.h"
 #include "manifest_parser.h"
 #include "metrics.h"
 #include "state.h"
@@ -115,9 +113,9 @@ struct NinjaMain : public BuildLogUser {
                               vector<Node*>* targets, string* err);
 
   // The various subcommands, run via "-t XXX".
+#if 0  
   int ToolGraph(const Options* options, int argc, char* argv[]);
   int ToolQuery(const Options* options, int argc, char* argv[]);
-#if 0  
   int ToolDeps(const Options* options, int argc, char* argv[]);
   int ToolBrowse(const Options* options, int argc, char* argv[]);
   int ToolMSVC(const Options* options, int argc, char* argv[]);
@@ -333,7 +331,7 @@ bool NinjaMain::CollectTargetsFromArgs(int argc, char* argv[],
   }
   return true;
 }
-
+#if 0
 int NinjaMain::ToolGraph(const Options* options, int argc, char* argv[]) {
   vector<Node*> nodes;
   string err;
@@ -350,7 +348,7 @@ int NinjaMain::ToolGraph(const Options* options, int argc, char* argv[]) {
 
   return 0;
 }
-#if 0
+
 int NinjaMain::ToolQuery(const Options* options, int argc, char* argv[]) {
   if (argc == 0) {
     Error("expected a target to query");
