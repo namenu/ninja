@@ -134,7 +134,7 @@ Lexer::Token Lexer::ReadToken() {
     [ ]*"\r\n" { token = NEWLINE;  break; }
     [ ]*"\n"   { token = NEWLINE;  break; }
     [ ]+       { token = INDENT;   break; }
-    "o"    { token = BUILD;    break; }    
+    "o" | "build"    { token = BUILD;    break; }    
     "pool"     { token = POOL;     break; }
     "rule"     { token = RULE;     break; }
     "default"  { token = DEFAULT;  break; }
