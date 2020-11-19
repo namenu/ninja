@@ -21,12 +21,12 @@ using namespace std;
 
 #include "lexer.h"
 
-struct FileReader;
+struct DiskInterface;
 struct State;
 
 /// Base class for parsers.
 struct Parser {
-  Parser(State* state, FileReader* file_reader)
+  Parser(State* state, DiskInterface* file_reader)
       : state_(state), file_reader_(file_reader) {}
 
   /// Load and parse a file.
@@ -38,7 +38,7 @@ protected:
   bool ExpectToken(Lexer::Token expected, string* err);
 
   State* state_;
-  FileReader* file_reader_;
+  DiskInterface* file_reader_;
   Lexer lexer_;
 
 private:

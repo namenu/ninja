@@ -22,7 +22,7 @@
 #include "util.h"
 #include "version.h"
 
-DyndepParser::DyndepParser(State* state, FileReader* file_reader,
+DyndepParser::DyndepParser(State* state, DiskInterface* file_reader,
                            DyndepFile* dyndep_file)
     : Parser(state, file_reader)
     , dyndep_file_(dyndep_file) {

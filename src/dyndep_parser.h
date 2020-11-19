@@ -23,7 +23,7 @@ struct DyndepFile;
 
 /// Parses dyndep files.
 struct DyndepParser: public Parser {
-  DyndepParser(State* state, FileReader* file_reader,
+  DyndepParser(State* state, DiskInterface* file_reader,
                DyndepFile* dyndep_file);
 private:
   /// Parse a file, given its contents as a string.

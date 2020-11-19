@@ -40,7 +40,7 @@ struct ManifestParserOptions {
 
 /// Parses .ninja files.
 struct ManifestParser : public Parser {
-  ManifestParser(State* state, FileReader* file_reader,
+  ManifestParser(State* state, DiskInterface* file_reader,
                  ManifestParserOptions options = ManifestParserOptions());
 
   /// Parse a text string of input.  Used by tests.
