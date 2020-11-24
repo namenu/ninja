@@ -140,6 +140,7 @@ Lexer::Token Lexer::ReadToken() {
     "default"  { token = DEFAULT;  break; }
     "="        { token = EQUALS;   break; }
     ":"        { token = COLON;    break; }
+    ":="       { token = COLON_EQUAL; break; }
     "||"       { token = PIPE2;    break; }
     "|"        { token = PIPE;     break; }
     "include"  { token = INCLUDE;  break; }

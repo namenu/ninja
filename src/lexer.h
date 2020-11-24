@@ -33,6 +33,7 @@ struct Lexer {
     ERROR,
     BUILD,
     COLON,
+    COLON_EQUAL,
     DEFAULT,
     EQUALS,
     IDENT,
