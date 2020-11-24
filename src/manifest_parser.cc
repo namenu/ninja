@@ -23,8 +23,9 @@
 #include "util.h"
 #include "version.h"
 #include "metrics.h"
-
-ManifestParser::ManifestParser(State* state, FileReader* file_reader,
+#include "debug_flags.h"
+#include "disk_interface.h"
+ManifestParser::ManifestParser(State* state, DiskInterface* file_reader,
                                ManifestParserOptions options)
     : Parser(state, file_reader),
       options_(options), quiet_(false) {
@@ -61,14 +62,25 @@ bool ManifestParser::Parse(const string& filename, const string& input,
       lexer_.UnreadToken();
       string name;
       EvalString let_value;
-      if (!ParseLet(&name, &let_value, err))
-        return false;
-      string value = let_value.Evaluate(env_);
-      // Check ninja_required_version immediately so we can exit
-      // before encountering any syntactic surprises.
-      if (name == "ninja_required_version")
-        CheckNinjaVersion(value);
-      env_->AddBinding(name, value);
+      if(!lexer_.ReadIdent(&name)){
+        return lexer_.Error("expected variable name",err);
+      }
+      if(lexer_.PeekToken(Lexer::COLON_EQUAL)){
+        if(!lexer_.ReadPath(&let_value,err)) return false;
+        string value = let_value.Evaluate(env_);
+        TimeStamp mtime = file_reader_ -> Stat(value,err);
+        env_->AddBinding(name,to_string(mtime));
+      } else if(lexer_.PeekToken(Lexer::EQUALS)){
+        if(!lexer_.ReadVarValue(&let_value,err)) return false;
+        if (name == "rescript") {
+          g_rescript = true;
+        } else {
+          string value = let_value.Evaluate(env_);
+          env_->AddBinding(name, value);
+        }
+      } else {
+        return lexer_.Error("expected = or := ", err);
+      }            
       break;
     }
     case Lexer::INCLUDE:

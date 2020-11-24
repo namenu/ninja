@@ -19,7 +19,7 @@
 #include "util.h"
 
 const char* kNinjaVersion = "1.9.0.git";
-
+#if 0
 void ParseVersion(const string& version, int* major, int* minor) {
   size_t end = version.find('.');
   *major = atoi(version.substr(0, end).c_str());
@@ -51,3 +51,4 @@ void CheckNinjaVersion(const string& version) {
           kNinjaVersion, version.c_str());
   }
 }
+#endif

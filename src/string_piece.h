@@ -82,7 +82,18 @@ struct StringPiece {
     static const StringPiece js(".cjs", sizeof(".cjs") - 1);
     return js;
   }
-
+  static const StringPiece& getCmjSuffix() {
+    static const StringPiece js(".cmj", sizeof(".cmj") - 1);
+    return js;
+  }
+  static const StringPiece& getCmiSuffix() {
+    static const StringPiece js(".cmi", sizeof(".cmi") - 1);
+    return js;
+  }
+  static const StringPiece& getCmtSuffix() {
+    static const StringPiece js(".cmt", sizeof(".cmt") - 1);
+    return js;
+  }
   size_t size() const {
     return len_;
   }

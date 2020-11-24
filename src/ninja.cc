@@ -1371,10 +1371,11 @@ NORETURN void real_main(int argc, char** argv) {
 
     if (options.tool && options.tool->when == Tool::RUN_AFTER_LOGS)
       exit((ninja.*options.tool->func)(&options, argc, argv));
-    
-    //TODO: make it configurable    
-    ninja.ToolCleanDead(&options,argc,argv);
-    
+
+    if (g_rescript) {
+      ninja.ToolCleanDead(&options, argc, argv);
+    }
+
 #if 0    
     // Attempt to rebuild the manifest before building anything else
     if (ninja.RebuildManifest(options.input_file, &err)) {
