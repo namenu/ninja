@@ -76,6 +76,7 @@ const char* Lexer::TokenName(Token t) {
   case COLON:    return "':'";
   case DEFAULT:  return "'default'";
   case EQUALS:   return "'='";
+  case COLON_EQUAL: return "':='";
   case IDENT:    return "identifier";
   case INCLUDE:  return "'include'";
   case INDENT:   return "indent";
