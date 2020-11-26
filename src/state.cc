@@ -77,6 +77,7 @@ State::State() {
   bindings_.AddRule(&kPhonyRule);
   AddPool(&kDefaultPool);
   AddPool(&kConsolePool);
+  rescript_mode_ = false;
 }
 
 void State::AddPool(Pool* pool) {

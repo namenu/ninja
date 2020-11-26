@@ -81,7 +81,9 @@ bool ManifestParser::Parse(const string& filename, const string& input,
       } else if(lexer_.PeekToken(Lexer::EQUALS)){
         if(!lexer_.ReadVarValue(&let_value,err)) return false;
         if (name == "rescript") {
-          g_rescript = true;
+          state_ -> rescript_mode_ = true;
+        } else if(name == "cleaner") {
+          state_ -> cleaner =  let_value.Evaluate(env_);
         } else {
           string value = let_value.Evaluate(env_);
           env_->AddBinding(name, value);

@@ -21,6 +21,7 @@
 #include "graph.h"
 #include "state.h"
 #include "util.h"
+#include <stdlib.h>
 
 Cleaner::Cleaner(State* state,
                  const BuildConfig& config,
@@ -133,24 +134,28 @@ void Cleaner::CleanDead(const BuildLog::Entries& entries) {
     Node* n = state_->LookupNode(i->first);
     if (!n || !n->in_edge()) {
       string toDelete = i->first.AsString();
-      if(StringPiece::getJsSuffix().IsSuffix(toDelete) ||
-         StringPiece::getMjsSuffix().IsSuffix(toDelete) || 
-         StringPiece::getCjsSuffix().IsSuffix(toDelete)){
-        int ret = RemoveFile(toDelete);
-          if(ret == 0){
-            staleFiles.insert(toDelete);
-          }
+      int ret = RemoveFile(toDelete);
+      if (ret == 0) {
+        staleFiles.insert(toDelete);
       }
     }
   }
 
-  if(!staleFiles.empty()){
-    if(config_.verbosity != BuildConfig::QUIET){
-      printf("Remove staled output\n");
-      for(set<string>::const_iterator i = staleFiles.begin(); i != staleFiles.end(); ++i){
-        printf("%s ",i->c_str());
+  if (!staleFiles.empty()) {
+    printf("Remove %lu staled output\n", staleFiles.size());
+    if (!state_->cleaner.empty()) {
+      vector<string> staled_cm;
+      for (set<string>::const_iterator i = staleFiles.begin();
+           i != staleFiles.end(); ++i) {
+        if (StringPiece::getCmjSuffix().IsSuffix(*i)) {
+          staled_cm.push_back(*i);
+        }
       }
-      printf("\nRemove staled done\n");
+      for (size_t i = 0; i < staled_cm.size(); ++i) {
+        string command = state_->cleaner + " -cmt-rm " + staled_cm[i];
+        printf("%s\n", command.c_str());
+        system(command.c_str());
+      }
     }
   }
 }

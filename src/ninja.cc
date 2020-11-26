@@ -1372,7 +1372,7 @@ NORETURN void real_main(int argc, char** argv) {
     if (options.tool && options.tool->when == Tool::RUN_AFTER_LOGS)
       exit((ninja.*options.tool->func)(&options, argc, argv));
 
-    if (g_rescript) {
+    if (ninja.state_.rescript_mode_) {
       ninja.ToolCleanDead(&options, argc, argv);
     }
 

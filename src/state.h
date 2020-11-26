@@ -126,6 +126,9 @@ struct State {
 
   BindingEnv bindings_;
   vector<Node*> defaults_;
+  
+  bool rescript_mode_;
+  string cleaner ;
 };
 
 #endif  // NINJA_STATE_H_
