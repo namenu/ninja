@@ -152,9 +152,14 @@ void Cleaner::CleanDead(const BuildLog::Entries& entries) {
         }
       }
       for (size_t i = 0; i < staled_cm.size(); ++i) {
-        string command = state_->cleaner + " -cmt-rm " + staled_cm[i];
+        string& cmj = staled_cm[i]; 
+        cmj[cmj.size() - 1] = 't';
+        RemoveFile(cmj);
+        string command = state_->cleaner + " -cmt-rm " + cmj;
         printf("%s\n", command.c_str());
         system(command.c_str());
+        cmj.push_back('i');
+        RemoveFile(cmj);
       }
     }
   }
