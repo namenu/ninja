@@ -66,17 +66,13 @@ bool ManifestParser::Parse(const string& filename, const string& input,
         return lexer_.Error("expected variable name",err);
       }
       if(lexer_.PeekToken(Lexer::COLON_EQUAL)){
-        string value;
-        char buf[20];   
-        if(!lexer_.ReadPath(&let_value,err)) return false;
-        while (!let_value.empty()) {          
-          //TODO: error reporting, check cases when mtime == -1   
-          TimeStamp mtime = file_reader_->Stat(let_value.Evaluate(env_), err); 
-          snprintf(buf,sizeof(buf),"%" PRIx64 "-",mtime);
-          value.append(buf);
-          let_value.Clear();
-          if(!lexer_.ReadPath(&let_value,err)) return false;
-        }
+        string value = env_->LookupVariable(name);
+        char buf[20]; 
+        if(!lexer_.ReadVarValue(&let_value,err)) return false;
+        string file = let_value.Evaluate(env_);
+        TimeStamp mtime = file_reader_->Stat(file, err); 
+        snprintf(buf,sizeof(buf),"-" "%" PRIX64, mtime);        
+        value.append(buf);
         env_->AddBinding(name,value);
       } else if(lexer_.PeekToken(Lexer::EQUALS)){
         if(!lexer_.ReadVarValue(&let_value,err)) return false;
