@@ -70,8 +70,9 @@ bool ManifestParser::Parse(const string& filename, const string& input,
         char buf[20]; 
         if(!lexer_.ReadVarValue(&let_value,err)) return false;
         string file = let_value.Evaluate(env_);
-        TimeStamp mtime = file_reader_->Stat(file, err); 
-        snprintf(buf,sizeof(buf),"-" "%" PRIX64, mtime);        
+        TimeStamp mtime = 0;
+        if(!file.empty()) mtime = file_reader_->Stat(file, err); 
+        snprintf(buf,sizeof(buf),"-" "%" PRIx64, mtime);        
         value.append(buf);
         env_->AddBinding(name,value);
       } else if(lexer_.PeekToken(Lexer::EQUALS)){
