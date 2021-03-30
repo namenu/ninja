@@ -139,9 +139,9 @@ void Warning(const char* msg, ...) {
 void Error(const char* msg, ...) {
   va_list ap;
   if (GetAnsiType()){
-    fprintf(stderr, "\x1b[31m" "bsb: error: " "\x1b[0m");
+    fprintf(stderr, "\x1b[31m" "rescript: error: " "\x1b[0m");
   } else {
-    fprintf(stderr, "bsb: error: ");
+    fprintf(stderr, "rescript: error: ");
   }
   va_start(ap, msg);
   vfprintf(stderr, msg, ap);
