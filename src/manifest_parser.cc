@@ -354,7 +354,7 @@ bool ManifestParser::ParseEdge(string* err) {
   string dyndep; 
   bool hasDynDep = rule -> GetBinding("dyndep");
   if (hasDynDep) {
-    order_only++;
+    implicit++;
     inputs_reserve_size++;
   }
 

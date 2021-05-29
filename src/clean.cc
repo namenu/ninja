@@ -142,7 +142,7 @@ void Cleaner::CleanDead(const BuildLog::Entries& entries) {
   }
 
   if (!staleFiles.empty()) {
-    printf("Staled output removed");
+    printf("Staled output removed\n");
     if (!state_->cleaner.empty()) {
       vector<string> staled_cm;
       for (set<string>::const_iterator i = staleFiles.begin();
