@@ -1,3 +1,4 @@
+//@ts-check
 var child = require("child_process");
 var fs = require("fs");
 var os = require("os");
@@ -17,9 +18,20 @@ function build() {
   }
 }
 exports.build = build;
+
+/**
+ * @type{string}
+ */
+var dst;
+if (ext === 'darwin') {
+  dst = path.join(__dirname, "..", process.platform + process.arch, `ninja.exe`);
+} else {
+  dst = path.join(__dirname, "..", ext, `ninja.exe`);
+}
+
 if (require.main === module) {
   build();
   var src = path.join(__dirname, `ninja${ext === "win32" ? ".exe" : ""}`);
-  var dst = path.join(__dirname, "..", ext, `ninja.exe`);
+
   fs.copyFileSync(src, dst);
 }
