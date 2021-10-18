@@ -1172,18 +1172,26 @@ int NinjaMain::RunBuild(int argc, char** argv) {
     printf("ninja: build stopped: %s.\n", err.c_str());
 #else     
 
-  if(ShouldBeColorFul(false)){
-    printf("\x1b[31m" "FAILED:" "\x1b[0m" " %s.\n", err.c_str());    
-  } else {
-    printf("FAILED: %s.\n", err.c_str());    
-  }
+    if (ShouldBeColorFul(false)) {
+      printf("\x1b[31m" "FAILED:" "\x1b[0m" " %s.\n", err.c_str());
+    } else {
+      printf("FAILED: %s.\n", err.c_str());    
+    }
+    fprintf(compiler_log_, "FAILED: %s.\n", err.c_str());
 
 #endif
+
+    fprintf(compiler_log_, "#Done(%" PRId64 ")\n", GetTimeMillis());
+    fclose(compiler_log_);
+
     if (err.find("interrupted by user") != string::npos) {
       return 2;
     }
     return 1;
   }
+
+  fprintf(compiler_log_, "#Done(%" PRId64 ")\n", GetTimeMillis());
+  fclose(compiler_log_);
 
   return 0;
 }
